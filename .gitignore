@@ -1,0 +1,38 @@
+# ── Claude Code dev tooling ───────────────────────────────────
+# These are local AI assistant files, not project deliverables
+.agents/
+.claude/
+skills-lock.json
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.idea/
+.vscode/
+*.suo
+*.user
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+
+# ── Backup & temp files ───────────────────────────────────────
+*.bak
+*.bak2
+*_temp.*
+data/videos_temp.csv
+
+# ── Original / source files (keep working copies only) ────────
+site/branding/*\ (Original).*
+
+# ── OS noise ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Secrets (never commit these) ──────────────────────────────
+*.env
+.env.*
+config.local.*
