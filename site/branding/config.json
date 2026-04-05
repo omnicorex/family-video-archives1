@@ -1,0 +1,29 @@
+{
+  "_readme": "Edit this file to customize your Family Archives site. All changes take effect on next page load — no rebuild needed.",
+
+  "siteName": "Family Archives",
+  "tagline": "A curated collection of our most treasured moments — from celebrations and holidays to ordinary days worth remembering.",
+  "familyName": "The Family",
+  "foundedYear": 2024,
+
+  "mediaBaseUrl": "https://tube.tbg2.cloud",
+
+  "colors": {
+    "_readme": "Armenian flag colors. Adjust hex values to tweak the palette.",
+    "red":    "#C8001A",
+    "blue":   "#002FA0",
+    "orange": "#D88000"
+  },
+
+  "social": {
+    "ogTitle":       "Family Archives",
+    "ogDescription": "Our family video archive — organized, preserved, and shared with love.",
+    "ogUrl":         "",
+    "ogImage":       "branding/og-image.png"
+  },
+
+  "playlist_descriptions": {
+    "_readme": "Add a description for each playlist by its exact name. Leave blank or omit to show no description.",
+    "Example Playlist": "A brief description shown on the home page card and playlist header."
+  }
+}

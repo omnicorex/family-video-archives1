@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#06060E"/>
+
+  <!-- Armenian stripe bands (subtle) -->
+  <rect x="0" y="0"   width="1200" height="210" fill="#C8001A" opacity="0.06"/>
+  <rect x="0" y="210" width="1200" height="210" fill="#002FA0" opacity="0.06"/>
+  <rect x="0" y="420" width="1200" height="210" fill="#D88000" opacity="0.06"/>
+
+  <!-- Left accent bar -->
+  <rect x="72" y="120" width="7" height="390" rx="3.5" fill="#C8001A" opacity="0.9"/>
+  <rect x="72" y="250" width="7" height="130" rx="0"   fill="#002FA0" opacity="0.9"/>
+  <rect x="72" y="380" width="7" height="130" rx="3.5" fill="#D88000" opacity="0.9"/>
+
+  <!-- Logo / film-reel icon -->
+  <g transform="translate(105, 220)" opacity="0.18" stroke="white" stroke-width="1.2" fill="none">
+    <rect x="0" y="15" width="64" height="42" rx="4"/>
+    <circle cx="32" cy="36" r="12"/>
+    <rect x="10" y="8"  width="12" height="7" rx="2"/>
+    <rect x="28" y="8"  width="12" height="7" rx="2"/>
+    <rect x="10" y="57" width="12" height="7" rx="2"/>
+    <rect x="28" y="57" width="12" height="7" rx="2"/>
+    <path d="M27 30 L27 42 L38 36 Z" fill="white" stroke="none" opacity="0.7"/>
+  </g>
+
+  <!-- Main title text — rendered as shapes for portability -->
+  <!-- "Family" -->
+  <text x="108" y="340"
+        font-family="Georgia, serif"
+        font-size="104"
+        font-weight="700"
+        letter-spacing="-4"
+        fill="#EEEAF4">Family</text>
+  <!-- "Archives." -->
+  <text x="108" y="448"
+        font-family="Georgia, serif"
+        font-size="104"
+        font-weight="700"
+        letter-spacing="-4"
+        fill="#C8001A">Archives.</text>
+
+  <!-- Tagline -->
+  <text x="110" y="510"
+        font-family="Georgia, sans-serif"
+        font-size="28"
+        font-weight="400"
+        fill="#857E96"
+        letter-spacing="0.5">Curated family memories — preserved forever.</text>
+
+  <!-- Right decorative element: film strip -->
+  <g transform="translate(900, 140)" opacity="0.9">
+    <!-- Frame 1 -->
+    <rect x="0"   y="0"   width="220" height="140" rx="8" stroke="#EEEAF4" stroke-width="1.2" stroke-opacity="0.12"/>
+    <rect x="0"   y="0"   width="220" height="140" rx="8" fill="#111120"/>
+    <rect x="0"   y="0"   width="16" height="47"   rx="4" fill="#C8001A" opacity="0.8"/>
+    <rect x="0"   y="47"  width="16" height="46"   rx="0" fill="#002FA0" opacity="0.8"/>
+    <rect x="0"   y="93"  width="16" height="47"   rx="4" fill="#D88000" opacity="0.8"/>
+    <rect x="20"  y="12"  width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="12"  width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="12"  width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="12"  width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="20"  y="103" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="103" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="103" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="103" width="40" height="25" rx="3" fill="#1A1A30"/>
+
+    <!-- Frame 2 -->
+    <rect x="0"   y="160" width="220" height="140" rx="8" stroke="#EEEAF4" stroke-width="1.2" stroke-opacity="0.12"/>
+    <rect x="0"   y="160" width="220" height="140" rx="8" fill="#111120"/>
+    <rect x="0"   y="160" width="16" height="47"   rx="4" fill="#C8001A" opacity="0.8"/>
+    <rect x="0"   y="207" width="16" height="46"   rx="0" fill="#002FA0" opacity="0.8"/>
+    <rect x="0"   y="253" width="16" height="47"   rx="4" fill="#D88000" opacity="0.8"/>
+    <rect x="20"  y="172" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="172" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="172" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="172" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="20"  y="263" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="263" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="263" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="263" width="40" height="25" rx="3" fill="#1A1A30"/>
+
+    <!-- Frame 3 -->
+    <rect x="0"   y="320" width="220" height="140" rx="8" stroke="#EEEAF4" stroke-width="1.2" stroke-opacity="0.12"/>
+    <rect x="0"   y="320" width="220" height="140" rx="8" fill="#111120"/>
+    <rect x="0"   y="320" width="16" height="47"   rx="4" fill="#C8001A" opacity="0.8"/>
+    <rect x="0"   y="367" width="16" height="46"   rx="0" fill="#002FA0" opacity="0.8"/>
+    <rect x="0"   y="413" width="16" height="47"   rx="4" fill="#D88000" opacity="0.8"/>
+    <rect x="20"  y="332" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="332" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="332" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="332" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="20"  y="423" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="70"  y="423" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="120" y="423" width="40" height="25" rx="3" fill="#1A1A30"/>
+    <rect x="170" y="423" width="40" height="25" rx="3" fill="#1A1A30"/>
+  </g>
+</svg>
