@@ -1103,16 +1103,18 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
   position: relative;
 }
 
-/* Native HTML5 video element */
-.player-embed-wrap video {
+/* Native HTML5 video element or MediaCMS embed iframe */
+.player-embed-wrap video,
+.player-embed-wrap iframe {
   width: 100%;
   height: 100%;
   display: block;
+  border: none;
   object-fit: contain;
   background: #000;
 }
 
-/* Hint shown when video URLs haven't been enriched yet */
+/* Hint shown when no video URL is available */
 .player-no-url {
   width: 100%; height: 100%;
   display: flex;
@@ -1137,18 +1139,153 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
   padding: 0.4rem 0.8rem;
 }
 
-.player-info { margin-top: 1.25rem; }
-.player-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  margin-bottom: 0.5rem;
-  line-height: 1.25;
+/* ── Player info card — Double-Bezel architecture ─────────── */
+.player-info { margin-top: 1rem; }
+
+/* Outer bezel — gradient shimmer border using Armenian palette */
+.player-info-bezel {
+  background: linear-gradient(
+    135deg,
+    rgba(204, 0, 24, 0.18) 0%,
+    rgba(0, 48, 168, 0.14) 50%,
+    rgba(208, 120, 0, 0.18) 100%
+  );
+  border-radius: 22px;
+  padding: 1.5px;
+  box-shadow:
+    0 8px 40px rgba(204, 0, 24, 0.07),
+    0 4px 20px rgba(0, 48, 168, 0.07),
+    0 0  0 1px rgba(242, 232, 208, 0.05);
 }
+
+/* Inner core — sits machined inside the outer shell */
+.player-info-core {
+  background: var(--bg-card);
+  border-radius: 20.5px;
+  overflow: hidden;
+}
+
+/* Armenian tri-color accent stripe — red → blue → orange */
+.player-info-stripe {
+  position: relative;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--red)         0%,
+    var(--red-bright)  18%,
+    var(--blue-bright) 45%,
+    var(--blue)        58%,
+    var(--orange)      82%,
+    var(--orange-bright) 100%
+  );
+  overflow: hidden;
+}
+
+/* GPU-accelerated shimmer sweep across the stripe */
+.player-info-stripe-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent          0%,
+    rgba(255,255,255,0.35) 50%,
+    transparent          100%
+  );
+  transform: translateX(-100%);
+  animation: stripe-sweep 7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes stripe-sweep {
+  0%   { transform: translateX(-100%); }
+  35%  { transform: translateX(250%);  }
+  100% { transform: translateX(250%);  }
+}
+
+/* Content padding */
+.player-info-body {
+  padding: 1.1rem 1.4rem 1.5rem;
+}
+
+/* Eyebrow row — holds the date pill */
+.player-info-eyebrow {
+  min-height: 1.75rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Date pill */
+.player-date-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.2rem 0.7rem 0.2rem 0.55rem;
+  background: rgba(208, 120, 0, 0.11);
+  border: 1px solid rgba(208, 120, 0, 0.28);
+  border-radius: 100px;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+  opacity: 1;
+  transition: opacity 0.3s var(--ease);
+}
+
+/* Decorative dot marker before the date */
+.player-date-tag::before {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange-text);
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.player-date-tag:empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Title */
+.player-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 0;
+}
+
+/* Description — blue left-bar grounds the paragraph */
 .player-desc {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.78;
+  margin-top: 0.8rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid rgba(0, 48, 168, 0.35);
+}
+
+/* ── Entry animation — triggered by JS adding .is-entering ─ */
+@keyframes info-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.player-info-bezel.is-entering {
+  animation: info-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.player-info-bezel.is-entering .player-date-tag {
+  animation: info-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.07s both;
+}
+.player-info-bezel.is-entering .player-title {
+  animation: info-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.13s both;
+}
+.player-info-bezel.is-entering .player-desc {
+  animation: info-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.21s both;
 }
 
 /* Video list sidebar */
@@ -1455,4 +1592,316 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
 @media (max-width: 480px) {
   .hero-title { font-size: 3rem; }
   .playlists-section { padding-top: 3rem; }
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+/* Nav search button */
+.nav-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.65rem;
+  background: rgba(242, 232, 208, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.nav-search-btn:hover {
+  background: rgba(242, 232, 208, 0.1);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+.nav-search-kbd {
+  font-family: inherit;
+  font-size: 0.62rem;
+  opacity: 0.5;
+  letter-spacing: 0;
+}
+
+/* ── Overlay backdrop ───────────────────────────────────────── */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(7, 7, 15, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(4rem, 10vh, 7rem) 1rem 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.search-overlay.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+/* [hidden] keeps display:none until JS removes it */
+.search-overlay[hidden] { display: none; }
+
+/* ── Modal card ─────────────────────────────────────────────── */
+.search-modal {
+  width: 100%;
+  max-width: 680px;
+  background: var(--bg-card);
+  border: 1px solid rgba(242, 232, 208, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(242, 232, 208, 0.04),
+    0 0 60px rgba(204, 0, 24, 0.06),
+    0 0 60px rgba(0, 48, 168, 0.06);
+  transform: translateY(-16px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.search-overlay.is-open .search-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* ── Search input header ─────────────────────────────────────── */
+.search-modal-header {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.search-input-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  caret-color: var(--orange-text);
+  min-width: 0;
+}
+.search-input::placeholder  { color: var(--text-muted); font-weight: 500; }
+/* Hide native clear button (we handle UX via input value) */
+.search-input::-webkit-search-cancel-button { display: none; }
+
+/* ── Results container ──────────────────────────────────────── */
+.search-results {
+  max-height: min(420px, 55vh);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ── Empty / no-results state ───────────────────────────────── */
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2.5rem 1.5rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+.search-empty svg  { opacity: 0.3; }
+.search-empty p    { font-size: 0.875rem; }
+.search-empty strong { color: var(--text-secondary); }
+
+/* ── Individual result card ─────────────────────────────────── */
+@keyframes result-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
+  animation: result-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.search-result-item:hover,
+.search-result-item.is-active {
+  background: rgba(242, 232, 208, 0.05);
+}
+.search-result-item.is-active {
+  border-left-color: var(--red-text);
+}
+
+/* Thumbnail */
+.search-result-thumb {
+  width: 76px;
+  min-width: 76px;
+  height: 46px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+.search-result-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Body */
+.search-result-body {
+  flex: 1;
+  min-width: 0;
+}
+.search-result-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+.search-result-title mark {
+  background: rgba(208, 120, 0, 0.18);
+  color: var(--orange-text);
+  border-radius: 3px;
+  padding: 0 2px;
+  font-style: normal;
+}
+.search-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.search-result-date {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+  background: rgba(208, 120, 0, 0.1);
+  border: 1px solid rgba(208, 120, 0, 0.22);
+  border-radius: 100px;
+  padding: 0.1rem 0.5rem;
+}
+.search-result-playlist {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-text);
+  background: rgba(0, 48, 168, 0.12);
+  border: 1px solid rgba(51, 102, 221, 0.25);
+  border-radius: 100px;
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* Description match snippet */
+.search-result-snippet {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Subtle left rule — visually tags this as "from description" */
+  border-left: 2px solid rgba(51, 102, 221, 0.35);
+  padding-left: 0.45rem;
+}
+/* Description match highlight — blue palette, distinct from orange title marks */
+.search-result-snippet mark,
+mark.desc-mark {
+  background: rgba(0, 48, 168, 0.20);
+  color: var(--blue-text);
+  border-radius: 3px;
+  padding: 0 2px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* When a snippet is present, align thumb to top so it doesn't float mid-card */
+.search-result-item.has-snippet {
+  align-items: flex-start;
+}
+.search-result-item.has-snippet .search-result-thumb {
+  margin-top: 0.2rem;
+}
+.search-result-item.has-snippet .search-result-arrow {
+  margin-top: 0.35rem;
+}
+
+/* Arrow icon */
+.search-result-arrow {
+  color: var(--text-muted);
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s var(--ease), transform 0.15s var(--ease);
+}
+.search-result-item:hover .search-result-arrow,
+.search-result-item.is-active .search-result-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ── Keyboard hints footer ───────────────────────────────────── */
+.search-hints {
+  display: flex;
+  gap: 1.25rem;
+  padding: 0.6rem 1.1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.search-hints kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  border-radius: 4px;
+  padding: 0.08rem 0.38rem;
+  font-family: inherit;
+  font-size: 0.62rem;
+  margin-right: 0.3rem;
+  color: var(--text-secondary);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .nav-search-label { display: none; }
+  .nav-search-kbd   { display: none; }
+  .nav-search-btn   { padding: 0.4rem 0.55rem; }
+
+  .search-overlay   { padding-top: 1rem; align-items: flex-end; padding-bottom: 0; }
+  .search-modal     { border-radius: 20px 20px 0 0; max-height: 90vh; }
+  .search-results   { max-height: min(50vh, 360px); }
+
+  .search-result-thumb { width: 56px; min-width: 56px; height: 34px; }
+  .search-result-playlist { max-width: 110px; }
 }
