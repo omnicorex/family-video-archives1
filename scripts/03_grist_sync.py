@@ -27,13 +27,19 @@ import urllib.parse
 import urllib.request
 from datetime import datetime
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed — fall back to real environment variables
+
 # ── Configuration ──────────────────────────────────────────────────────────────
 MEDIACMS_URL  = "https://tube.tbg2.cloud"
 MEDIACMS_USER = "family"
 PAGE_SIZE     = 100
 
 GRIST_URL      = "https://sheets.tbg2.cloud"
-GRIST_API_KEY  = os.environ.get("GRIST_API_KEY", "116a9a5168d500eb44d787de5179337f9744766b")
+GRIST_API_KEY  = os.environ.get("GRIST_API_KEY", "")
 GRIST_DOC_ID   = "1pEArZCQEChq"
 GRIST_TABLE_ID = "Table1"   # Grist internal table ID — visible in the URL when
                              # the table tab is selected in the Grist UI.
@@ -288,6 +294,14 @@ def batched(lst, n):
 
 def main():
     print("=== Script 03 - Sync MediaCMS -> Grist ===\n")
+
+    if not GRIST_API_KEY:
+        print("ERROR: GRIST_API_KEY environment variable is not set.")
+        print("  Create a .env file in the project root with:")
+        print("    GRIST_API_KEY=your_api_key_here")
+        print("  Then run:  python scripts/03_grist_sync.py")
+        print("  (See .env.example for the template.)")
+        sys.exit(1)
 
     # 1. Authenticate with MediaCMS
     print(f"Connecting to MediaCMS ({MEDIACMS_URL}) …")

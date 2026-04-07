@@ -30,9 +30,15 @@ import sys
 import urllib.error
 import urllib.request
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed — fall back to real environment variables
+
 # ── Configuration ──────────────────────────────────────────────────────────────
 GRIST_URL      = "https://sheets.tbg2.cloud"
-GRIST_API_KEY  = os.environ.get("GRIST_API_KEY", "116a9a5168d500eb44d787de5179337f9744766b")
+GRIST_API_KEY  = os.environ.get("GRIST_API_KEY", "")
 GRIST_DOC_ID   = "1pEArZCQEChq"
 GRIST_TABLE_ID = "Table1"
 
@@ -181,6 +187,13 @@ def batched(lst, n):
 
 def main():
     print("=== Script 04 - Extract Dates -> suggested_date ===\n")
+
+    if not GRIST_API_KEY:
+        print("ERROR: GRIST_API_KEY environment variable is not set.")
+        print("  Create a .env file in the project root with:")
+        print("    GRIST_API_KEY=your_api_key_here")
+        print("  (See .env.example for the template.)")
+        sys.exit(1)
 
     # Ensure the target column exists
     print("Checking Grist columns …")

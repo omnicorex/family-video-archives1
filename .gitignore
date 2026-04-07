@@ -18,6 +18,13 @@ __pycache__/
 venv/
 .venv/
 
+# ── Large media files (hosted on MediaCMS, not committed) ─────
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
 # ── Backup & temp files ───────────────────────────────────────
 *.bak
 *.bak2
