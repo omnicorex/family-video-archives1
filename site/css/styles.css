@@ -111,7 +111,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .nav-links { display: flex; gap: 0.6rem; list-style: none; align-items: center; }
 
-/* ── Internal anchor link — warm amber pill ── */
+/* ── Internal anchor link — red pill (matches mobile 01) ── */
 .nav-link--internal {
   display: inline-flex;
   align-items: center;
@@ -121,23 +121,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   text-transform: uppercase;
   padding: 0.42rem 1rem;
   border-radius: 99px;
-  background: rgba(245, 168, 48, 0.1);
-  color: var(--orange-text);
-  border: 1px solid rgba(245, 168, 48, 0.22);
+  background: rgba(204, 0, 24, 0.10);
+  color: var(--red-text);
+  border: 1px solid rgba(255, 68, 85, 0.22);
   transition:
-    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    color      0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background   0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color        0.3s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    transform  0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform    0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nav-link--internal:hover {
-  background: rgba(245, 168, 48, 0.2);
-  border-color: rgba(245, 168, 48, 0.5);
+  background: rgba(204, 0, 24, 0.18);
+  border-color: rgba(255, 68, 85, 0.50);
   color: #fff;
   transform: translateY(-1px);
 }
 
-/* ── External link — cool blue outlined badge with arrow icon ── */
+/* ── External link — orange outlined badge with arrow icon (matches mobile 03) ── */
 .nav-link--external {
   display: inline-flex;
   align-items: center;
@@ -149,17 +149,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: 0.42rem 1rem;
   border-radius: 99px;
   background: transparent;
-  color: var(--blue-text);
-  border: 1px solid rgba(102, 153, 255, 0.25);
+  color: var(--orange-text);
+  border: 1px solid rgba(245, 168, 48, 0.25);
   transition:
-    background  0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    color       0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background   0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color        0.3s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    transform   0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform    0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nav-link--external:hover {
-  background: rgba(102, 153, 255, 0.12);
-  border-color: rgba(102, 153, 255, 0.5);
+  background: rgba(245, 168, 48, 0.12);
+  border-color: rgba(245, 168, 48, 0.50);
   color: #fff;
   transform: translateY(-1px);
 }
@@ -1863,27 +1863,27 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
    SEARCH
    ============================================================ */
 
-/* Nav search button */
+/* Nav search button — blue pill (matches mobile 02) */
 .nav-search-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   padding: 0.35rem 0.75rem 0.35rem 0.65rem;
-  background: rgba(242, 232, 208, 0.05);
-  border: 1px solid var(--border);
+  background: rgba(0, 48, 168, 0.10);
+  border: 1px solid rgba(102, 153, 255, 0.22);
   border-radius: 100px;
   font-family: inherit;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--text-secondary);
+  color: var(--blue-text);
   cursor: pointer;
   transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
 }
 .nav-search-btn:hover {
-  background: rgba(242, 232, 208, 0.1);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
+  background: rgba(0, 48, 168, 0.18);
+  border-color: rgba(102, 153, 255, 0.50);
+  color: #fff;
 }
 .nav-search-kbd {
   font-family: inherit;
