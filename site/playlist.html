@@ -56,8 +56,38 @@
           </button>
         </li>
       </ul>
+
+      <!-- Mobile hamburger (hidden on desktop via CSS) -->
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="ham-bar ham-bar-1"></span>
+        <span class="ham-bar ham-bar-2"></span>
+      </button>
     </div>
   </nav>
+
+  <!-- ── Mobile full-screen menu ─────────────────────────────── -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-handle" aria-hidden="true"></div>
+      <nav aria-label="Mobile navigation">
+        <ul class="mobile-menu-list" role="list">
+          <li class="mobile-menu-item" style="--i:0">
+            <a class="mobile-menu-link mobile-menu-link--red" href="index.html#playlists" data-close-menu>
+              <span class="mml-num" aria-hidden="true">01</span>
+              <span class="mml-text">All Playlists</span>
+            </a>
+          </li>
+          <li class="mobile-menu-item" style="--i:1">
+            <button class="mobile-menu-link mobile-menu-link--blue" id="mobile-search-btn">
+              <span class="mml-num" aria-hidden="true">02</span>
+              <span class="mml-text">Search</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <p class="mobile-menu-hint" aria-hidden="true">tap outside to close</p>
+    </div>
+  </div>
 
   <!-- ── Playlist Header ────────────────────────────────────── -->
   <header class="playlist-hero">

@@ -169,6 +169,295 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav-link--external:hover svg { transform: translate(2px, -2px); }
 
+/* ── Hamburger button (mobile only — shown via media query) ── */
+@keyframes ham-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(204, 0, 24, 0.18),
+      0 0  8px rgba(204, 0, 24, 0.10),
+      0 0 14px rgba(0, 48, 168, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(204, 0, 24, 0.40),
+      0 0 14px rgba(204, 0, 24, 0.22),
+      0 0 24px rgba(0, 48, 168, 0.18);
+  }
+}
+
+/* scaleX-only drift — zero layout work, runs entirely on GPU compositor */
+@keyframes ham-bar-drift {
+  0%, 100% { transform: scaleX(1);    }
+  50%       { transform: scaleX(0.72); }
+}
+
+.nav-hamburger {
+  display: none;               /* hidden on desktop */
+  position: relative;
+  z-index: 251;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Gradient border: Armenian palette red → orange → blue */
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(8, 8, 18, 0.92), rgba(8, 8, 18, 0.92)) padding-box,
+    linear-gradient(145deg, rgba(204,0,24,0.55), rgba(208,120,0,0.55), rgba(0,48,168,0.55)) border-box;
+  /* Idle breathing glow */
+  animation: ham-breathe 3.2s ease-in-out infinite;
+  transition:
+    background  0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform   0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover: sharpen the border, lift, stop idle animation */
+.nav-hamburger:hover {
+  background:
+    linear-gradient(rgba(8, 8, 18, 0.88), rgba(8, 8, 18, 0.88)) padding-box,
+    linear-gradient(145deg, #EE1030, #F09010, #3366DD) border-box;
+  transform: scale(1.08);
+  animation: none;
+  box-shadow:
+    0 0 0 1px rgba(238, 16, 48, 0.25),
+    0 0 18px rgba(238, 16, 48, 0.18),
+    0 0 30px rgba(0, 48, 168, 0.14),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Open state: stop breathing, keep the vivid border */
+.nav-hamburger.is-open {
+  animation: none;
+  background:
+    linear-gradient(rgba(8, 8, 18, 0.92), rgba(8, 8, 18, 0.92)) padding-box,
+    linear-gradient(145deg, #EE1030, #F09010, #3366DD) border-box;
+  box-shadow:
+    0 0 0 1px rgba(238, 16, 48, 0.3),
+    0 0 20px rgba(238, 16, 48, 0.20),
+    0 0 32px rgba(0, 48, 168, 0.16);
+}
+
+/* Active press */
+.nav-hamburger:active { transform: scale(0.95); }
+
+/* The bars — only transform + opacity + box-shadow in transition (no width/layout props) */
+.ham-bar {
+  display: block;
+  width: 20px;      /* fixed forever — never animated, never changes */
+  height: 2px;
+  border-radius: 99px;
+  transform-origin: center;
+  transition:
+    transform  0.44s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s var(--ease),
+    opacity    0.3s var(--ease);
+}
+
+/* Bar 1: red → orange — idle drift animation (scaleX only, GPU compositor) */
+.ham-bar-1 {
+  background: linear-gradient(90deg, #EE1030 0%, #F5A830 100%);
+  box-shadow: 0 0 5px rgba(238, 16, 48, 0.55), 0 0 10px rgba(238, 16, 48, 0.2);
+  animation: ham-bar-drift 3.2s ease-in-out infinite;
+}
+
+/* Bar 2: orange → blue — shorter via scaleX, no width change ever */
+.ham-bar-2 {
+  background: linear-gradient(90deg, #F09010 0%, #3366DD 100%);
+  box-shadow: 0 0 5px rgba(51, 102, 221, 0.50), 0 0 10px rgba(51, 102, 221, 0.18);
+  transform: scaleX(0.65);   /* appears ~13px — pure compositor, zero reflow */
+}
+
+/* Hover: both bars lock to full scale, glows intensify */
+.nav-hamburger:hover .ham-bar-1 {
+  transform: scaleX(1);
+  box-shadow: 0 0 8px rgba(238, 16, 48, 0.85), 0 0 18px rgba(238, 16, 48, 0.35);
+  animation: none;
+}
+.nav-hamburger:hover .ham-bar-2 {
+  transform: scaleX(1);
+  box-shadow: 0 0 8px rgba(51, 102, 221, 0.80), 0 0 18px rgba(51, 102, 221, 0.32);
+}
+
+/* Morph to × — combined transform keeps scaleX(1) explicit so bars are equal length */
+.nav-hamburger.is-open .ham-bar-1 {
+  transform: translateY(3.5px) rotate(45deg) scaleX(1);
+  animation: none;
+  box-shadow: 0 0 8px rgba(238, 16, 48, 0.80), 0 0 16px rgba(238, 16, 48, 0.30);
+}
+.nav-hamburger.is-open .ham-bar-2 {
+  transform: translateY(-3.5px) rotate(-45deg) scaleX(1);
+  box-shadow: 0 0 8px rgba(51, 102, 221, 0.75), 0 0 16px rgba(51, 102, 221, 0.28);
+}
+
+/* ── Mobile full-screen cinema menu ─────────────────────────── */
+.mobile-menu {
+  display: none;               /* not rendered on desktop at all */
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  align-items: flex-end;       /* panel anchors to bottom */
+  pointer-events: none;
+}
+.mobile-menu.is-open {
+  pointer-events: all;
+}
+/* Backdrop dim */
+.mobile-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 12, 0.80);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-menu.is-open::before { opacity: 1; }
+
+/* Slide-up glass panel */
+.mobile-menu-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: rgba(9, 9, 20, 0.97);
+  border-radius: 22px 22px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 1.75rem calc(2.5rem + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 -24px 60px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.mobile-menu.is-open .mobile-menu-panel { transform: translateY(0); }
+
+/* Drag handle */
+.mobile-menu-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  margin: 1rem auto 0;
+}
+
+/* Menu list */
+.mobile-menu-list { list-style: none; padding: 1.25rem 0 0; }
+.mobile-menu-item { overflow: hidden; }
+
+/* Each link — both <a> and <button> */
+.mobile-menu-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  text-decoration: none;
+  /* Staggered entrance: each item slides up from below */
+  transform: translateY(28px);
+  opacity: 0;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity   0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    color     0.2s var(--ease);
+  transition-delay: calc(var(--i, 0) * 65ms + 180ms);
+}
+.mobile-menu.is-open .mobile-menu-link {
+  transform: translateY(0);
+  opacity: 1;
+}
+/* Active press feel */
+.mobile-menu-link:active { transform: translateY(0) scale(0.98); opacity: 0.8; }
+
+/* Number label */
+.mml-num {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  min-width: 1.8rem;
+  padding-top: 0.35rem;
+  flex-shrink: 0;
+}
+/* Main text */
+.mml-text {
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Color variants — Armenian flag order: red · blue · orange ── */
+
+/* Number tags pick up a tinted hue from their parent link */
+.mobile-menu-link--red    .mml-num { color: rgba(255,  68,  85, 0.55); }
+.mobile-menu-link--blue   .mml-num { color: rgba(102, 153, 255, 0.55); }
+.mobile-menu-link--orange .mml-num { color: rgba(245, 168,  48, 0.55); }
+
+/* Hover: number brightens to match the text color */
+.mobile-menu-link--red:hover    .mml-num,
+.mobile-menu-link--red:focus-visible    .mml-num { color: var(--red-text);    }
+.mobile-menu-link--blue:hover   .mml-num,
+.mobile-menu-link--blue:focus-visible   .mml-num { color: var(--blue-text);   }
+.mobile-menu-link--orange:hover .mml-num,
+.mobile-menu-link--orange:focus-visible .mml-num { color: var(--orange-text); }
+
+/* Separator lines pick up a faint tint too */
+.mobile-menu-link--red    { border-bottom-color: rgba(255,  68,  85, 0.10); }
+.mobile-menu-link--blue   { border-bottom-color: rgba(102, 153, 255, 0.10); }
+.mobile-menu-link--orange { border-bottom-color: rgba(245, 168,  48, 0.10); }
+
+/* Text colour + glow on hover */
+.mobile-menu-link--red .mml-text    { color: var(--red-text);    }
+.mobile-menu-link--blue .mml-text   { color: var(--blue-text);   }
+.mobile-menu-link--orange .mml-text { color: var(--orange-text); }
+
+.mobile-menu-link--red:hover .mml-text,
+.mobile-menu-link--red:focus-visible .mml-text {
+  color: var(--red-bright);
+  text-shadow: 0 0 28px rgba(238, 16, 48, 0.40);
+}
+.mobile-menu-link--blue:hover .mml-text,
+.mobile-menu-link--blue:focus-visible .mml-text {
+  color: var(--blue-bright);
+  text-shadow: 0 0 28px rgba(51, 102, 221, 0.40);
+}
+.mobile-menu-link--orange:hover .mml-text,
+.mobile-menu-link--orange:focus-visible .mml-text {
+  color: var(--orange-bright);
+  text-shadow: 0 0 28px rgba(240, 144, 16, 0.40);
+}
+
+/* Tap-to-close hint */
+.mobile-menu-hint {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease) 0.42s;
+}
+.mobile-menu.is-open .mobile-menu-hint { opacity: 1; }
+
 /* ============================================================
    HERO — Split layout, left-aligned
    ============================================================ */
@@ -1537,40 +1826,16 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
   /* Section header stacks */
   .section-header { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
 
-  /* ── Mobile nav: floating bottom dock ── */
-  .nav-links {
-    /* Pull out of the navbar entirely */
-    position: fixed;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 300;
-    /* Glass pill */
-    background: rgba(13, 13, 28, 0.82);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 99px;
-    padding: 0.5rem 0.75rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.55),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-    gap: 0.4rem;
-    /* Slide up on load */
-    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-  }
-
-  /* Keep pill links same size but slightly more compact on small screens */
-  .nav-link--internal,
-  .nav-link--external {
-    font-size: 0.7rem;
-    padding: 0.45rem 0.9rem;
-  }
+  /* ── Mobile nav: hide desktop links, show hamburger ── */
+  .nav-links    { display: none; }
+  .nav-hamburger { display: flex; }
+  .mobile-menu  { display: flex; }
 
   /* Video list single column */
   .video-list { grid-template-columns: 1fr; }
 
-  /* Footer collapses to centered column + clearance for bottom dock */
-  footer { padding: 3.5rem var(--pad-x) 6rem; }
+  /* Footer collapses to centered column */
+  footer { padding: 3.5rem var(--pad-x) 3rem; }
   .footer-main {
     flex-direction: column;
     align-items: center;

@@ -35,6 +35,7 @@ async function init() {
   if (PAGE === "index")    initHomePage();
   if (PAGE === "playlist") initPlaylistPage();
 
+  initMobileMenu();
   initSearch();
   initHeroVideoFade();
   initFooter();
@@ -491,6 +492,58 @@ function initHeroVideoFade() {
   }
 
   requestAnimationFrame(tick);
+}
+
+// ============================================================
+// MOBILE MENU
+// ============================================================
+
+function initMobileMenu() {
+  const btn  = q("#nav-hamburger");
+  const menu = q("#mobile-menu");
+  if (!btn || !menu) return;
+
+  const openMenu = () => {
+    btn.classList.add("is-open");
+    menu.classList.add("is-open");
+    btn.setAttribute("aria-expanded", "true");
+    menu.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeMenu = () => {
+    btn.classList.remove("is-open");
+    menu.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+    menu.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+
+  btn.addEventListener("click", () => {
+    btn.classList.contains("is-open") ? closeMenu() : openMenu();
+  });
+
+  // Close when tapping the backdrop (the overlay itself, not the panel)
+  menu.addEventListener("click", e => { if (e.target === menu) closeMenu(); });
+
+  // Close when any link/button with data-close-menu is clicked
+  menu.querySelectorAll("[data-close-menu]").forEach(el => {
+    el.addEventListener("click", closeMenu);
+  });
+
+  // Mobile search button: close menu, then open search after slide-down completes
+  const mobileSearchBtn = q("#mobile-search-btn");
+  if (mobileSearchBtn) {
+    mobileSearchBtn.addEventListener("click", () => {
+      closeMenu();
+      setTimeout(openSearch, 340);
+    });
+  }
+
+  // Escape key closes menu
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && btn.classList.contains("is-open")) closeMenu();
+  });
 }
 
 // ============================================================

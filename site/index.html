@@ -63,8 +63,49 @@
           </svg>
         </a></li>
       </ul>
+
+      <!-- Mobile hamburger (hidden on desktop via CSS) -->
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="ham-bar ham-bar-1"></span>
+        <span class="ham-bar ham-bar-2"></span>
+      </button>
     </div>
   </nav>
+
+  <!-- ── Mobile full-screen menu ─────────────────────────────── -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-handle" aria-hidden="true"></div>
+      <nav aria-label="Mobile navigation">
+        <ul class="mobile-menu-list" role="list">
+          <li class="mobile-menu-item" style="--i:0">
+            <a class="mobile-menu-link mobile-menu-link--red" href="#playlists" data-close-menu>
+              <span class="mml-num" aria-hidden="true">01</span>
+              <span class="mml-text">Playlists</span>
+            </a>
+          </li>
+          <li class="mobile-menu-item" style="--i:1">
+            <button class="mobile-menu-link mobile-menu-link--blue" id="mobile-search-btn">
+              <span class="mml-num" aria-hidden="true">02</span>
+              <span class="mml-text">Search</span>
+            </button>
+          </li>
+          <li class="mobile-menu-item" style="--i:2">
+            <a class="mobile-menu-link mobile-menu-link--orange" href="https://tube.tbg2.cloud" target="_blank" rel="noopener noreferrer" data-close-menu>
+              <span class="mml-num" aria-hidden="true">03</span>
+              <span class="mml-text">
+                Source
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink:0;margin-left:0.25rem">
+                  <path d="M7 17L17 7M7 7h10v10"/>
+                </svg>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <p class="mobile-menu-hint" aria-hidden="true">tap outside to close</p>
+    </div>
+  </div>
 
   <!-- ── Hero ───────────────────────────────────────────────── -->
   <section class="hero" aria-labelledby="hero-title-text">
