@@ -32,8 +32,10 @@ async function init() {
 
   applyBranding();
 
-  if (PAGE === "index")    initHomePage();
-  if (PAGE === "playlist") initPlaylistPage();
+  if (PAGE === "index")     initHomePage();
+  if (PAGE === "playlist")  initPlaylistPage();
+  if (PAGE === "playlists") initPlaylistsPage();
+  if (PAGE === "timeline")  initTimelinePage();
 
   initMobileMenu();
   initSearch();
@@ -44,6 +46,9 @@ async function init() {
   const fy = document.getElementById("footer-year");
   if (fy) fy.textContent = new Date().getFullYear();
 }
+
+// ── Nav active state ──────────────────────────────────────────
+// Handled via data-page + CSS; no JS needed for static active pills.
 
 // ── Branding ─────────────────────────────────────────────────
 function applyBranding() {
@@ -90,13 +95,6 @@ function initHomePage() {
   // Stats
   setInner("stat-videos",    DATA.meta?.total_videos    ?? "—");
   setInner("stat-playlists", DATA.meta?.total_playlists ?? "—");
-
-  // Section count
-  const count = DATA.playlists?.length ?? 0;
-  setInner("section-count", count ? `${count} collection${count !== 1 ? "s" : ""}` : "");
-
-  // Render grid
-  renderPlaylists(DATA.playlists || []);
 }
 
 function renderPlaylists(playlists) {
@@ -436,18 +434,30 @@ function showError(msg) {
 // FOOTER — tricolor stripe reveal + scroll entry
 // ============================================================
 function initFooter() {
-  const footer = document.querySelector("footer");
-  if (!footer) return;
+  const footer     = document.querySelector("footer");
+  const donateCard = document.querySelector(".donate-card-bezel");
 
-  // Trigger the tricolor scaleX reveal when footer enters viewport
-  const obs = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      footer.classList.add("in-view");
-      obs.disconnect();
-    }
-  }, { threshold: 0.08 });
+  // Tricolor stripe reveal when footer enters viewport
+  if (footer) {
+    const footerObs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        footer.classList.add("in-view");
+        footerObs.disconnect();
+      }
+    }, { threshold: 0.08 });
+    footerObs.observe(footer);
+  }
 
-  obs.observe(footer);
+  // Donate card fade-up reveal
+  if (donateCard) {
+    const donateObs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        donateCard.classList.add("revealed");
+        donateObs.disconnect();
+      }
+    }, { threshold: 0.18 });
+    donateObs.observe(donateCard);
+  }
 }
 
 // ============================================================
@@ -860,4 +870,565 @@ function formatDate(str) {
       year: "numeric", month: "short", day: "numeric",
     });
   } catch (_) { return str; }
+}
+
+function parseWheelDate(str) {
+  if (!str) return null;
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function formatSeconds(s) {
+  if (!s) return "";
+  const m   = Math.floor(s / 60);
+  const sec = String(Math.floor(s % 60)).padStart(2, "0");
+  return `${m}:${sec}`;
+}
+
+// ============================================================
+// PLAYLISTS PAGE
+// ============================================================
+function initPlaylistsPage() {
+  setInner("nav-site-name",  esc(CONFIG.siteName || "Family Archives"));
+  setInner("footer-name",    esc(CONFIG.siteName || "Family Archives"));
+  setInner("stat-videos",    DATA.meta?.total_videos    ?? "—");
+  setInner("stat-playlists", DATA.meta?.total_playlists ?? "—");
+
+  const count = DATA.playlists?.length ?? 0;
+  setInner("section-count", count ? `${count} collection${count !== 1 ? "s" : ""}` : "");
+
+  renderPlaylists(DATA.playlists || []);
+}
+
+// ============================================================
+// TIMELINE PAGE — Chronological Wheel Picker
+// ============================================================
+
+/* Wheel state — all mutable wheel vars in one object */
+const WHL = {
+  videos:          [],
+  offset:          0,       // current rendered scroll position (px)
+  target:          0,       // lerp destination (px)
+  velocity:        0,       // momentum from fling/drag (px/frame)
+  isDragging:      false,
+  dragStartY:      0,
+  dragStartOffset: 0,
+  lastY:           0,
+  lastTime:        0,
+  lastVelocity:    0,
+  raf:             null,
+  activeIndex:     -1,
+  hlsInst:         null,    // active HLS.js instance
+};
+
+function wheelItemH() { return window.innerWidth < 900 ? 112 : 150; }
+function isMobileWheel() { return window.innerWidth < 900; }
+
+function clampWhl(v) {
+  const max = Math.max(0, (WHL.videos.length - 1) * wheelItemH());
+  return Math.max(0, Math.min(v, max));
+}
+
+function snapWhl() {
+  const h = wheelItemH();
+  WHL.target   = clampWhl(Math.round(WHL.target / h) * h);
+  WHL.velocity = 0;
+}
+
+// Project where momentum will coast to, then snap to nearest item boundary.
+// impulse = signed px/frame velocity at release.
+function projectAndSnap(impulse) {
+  const h = wheelItemH();
+  // Geometric series sum: total distance = v / (1 - friction)
+  const projected = WHL.target + impulse * (1 / (1 - 0.88));
+  WHL.target   = clampWhl(Math.round(projected / h) * h);
+  WHL.velocity = 0;
+}
+
+let whlScrollTimer = null; // debounce snap after mouse-wheel
+
+// ── Boot ─────────────────────────────────────────────────────
+function initTimelinePage() {
+  setInner("nav-site-name", esc(CONFIG.siteName || "Family Archives"));
+  setInner("footer-name",   esc(CONFIG.siteName || "Family Archives"));
+
+  // Gather all videos from all playlists, deduplicated
+  const seen = new Set();
+  const all  = [];
+  (DATA.playlists || []).forEach(pl => {
+    (pl.videos || []).forEach(v => {
+      if (seen.has(v.id)) return;
+      seen.add(v.id);
+      all.push({ ...v, playlist_id: pl.id, playlist_name: pl.name });
+    });
+  });
+
+  // Sort chronologically (undated go to top)
+  all.sort((a, b) => {
+    const da = a.date ? new Date(a.date) : new Date("1900-01-01");
+    const db = b.date ? new Date(b.date) : new Date("1900-01-01");
+    return da - db;
+  });
+
+  setInner("timeline-count", all.length ? `${all.length} video${all.length !== 1 ? "s" : ""}` : "0 videos");
+
+  if (!all.length) {
+    const stage = q("#wheel-stage");
+    if (stage) stage.innerHTML = `<div class="empty-state" style="grid-column:1/-1;margin:4rem auto"><p>No videos found.</p></div>`;
+    return;
+  }
+
+  WHL.videos = all;
+  buildWheelItems();
+  bindWheelEvents();
+
+  // Wire up mobile sheet close button
+  const closeBtn = q("#wheel-sheet-close");
+  if (closeBtn) closeBtn.addEventListener("click", closeWheelSheet);
+
+  // Start animation loop
+  WHL.raf = requestAnimationFrame(wheelTick);
+
+  // Initialise first item selection after a frame
+  setTimeout(() => whlSelectIndex(0, false), 80);
+}
+
+// ── Build DOM items ───────────────────────────────────────────
+function buildWheelItems() {
+  const list = q("#wheel-list");
+  if (!list) return;
+
+  list.innerHTML = WHL.videos.map((v, i) => {
+    const d        = parseWheelDate(v.date);
+    const monthStr = d ? d.toLocaleString("en-US", { month: "short" }).toUpperCase() : "";
+    const dayStr   = d ? String(d.getDate())                                          : "";
+    const yearStr  = d ? String(d.getFullYear())                                      : "????";
+    const thumb    = v.thumbnail || "";
+
+    return `<div class="wheel-item" data-index="${i}"
+                 role="option" aria-label="${esc(v.title)}" tabindex="-1">
+      <div class="wheel-item-inner">
+        <div class="wheel-item-thumb">
+          ${thumb
+            ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">`
+            : `<div class="wheel-thumb-blank"></div>`}
+          <div class="wheel-thumb-play" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="wheel-item-body">
+          <div class="wheel-item-date">
+            <span class="wid-month-day">${esc(monthStr)}${monthStr && dayStr ? " " + esc(dayStr) : esc(dayStr)}</span>
+            <span class="wid-year">${esc(yearStr)}</span>
+          </div>
+          <div class="wheel-item-title">${esc(v.title)}</div>
+          <div class="wheel-item-desc">${esc(v.description || "")}</div>
+          <div class="wheel-item-playlist">${esc(v.playlist_name || "")}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── Event Binding ─────────────────────────────────────────────
+function bindWheelEvents() {
+  const ctr = q("#wheel-container");
+  if (!ctr) return;
+
+  // ── Mouse wheel ────────────────────────────────────────────
+  // Accumulate raw delta into target, debounce snap to item boundary.
+  ctr.addEventListener("wheel", e => {
+    e.preventDefault();
+    WHL.velocity = 0;
+    WHL.target   = clampWhl(WHL.target + (e.deltaY || e.deltaX) * 0.7);
+    // Snap to nearest item ~80 ms after the last scroll event
+    clearTimeout(whlScrollTimer);
+    whlScrollTimer = setTimeout(snapWhl, 80);
+  }, { passive: false });
+
+  // ── Touch ──────────────────────────────────────────────────
+  ctr.addEventListener("touchstart", e => {
+    clearTimeout(whlScrollTimer);
+    WHL.isDragging      = true;
+    WHL.dragStartY      = e.touches[0].clientY;
+    WHL.dragStartOffset = WHL.offset;   // anchor to current *rendered* position
+    WHL.target          = WHL.offset;   // keep target in sync
+    WHL.lastY           = e.touches[0].clientY;
+    WHL.lastTime        = Date.now();
+    WHL.lastVelocity    = 0;
+    WHL.velocity        = 0;
+  }, { passive: true });
+
+  ctr.addEventListener("touchmove", e => {
+    if (!WHL.isDragging) return;
+    e.preventDefault();
+    const dy = WHL.dragStartY - e.touches[0].clientY;
+    WHL.target = clampWhl(WHL.dragStartOffset + dy);
+
+    const now = Date.now();
+    const dt  = Math.max(1, now - WHL.lastTime);
+    WHL.lastVelocity = (e.touches[0].clientY - WHL.lastY) / dt;
+    WHL.lastY        = e.touches[0].clientY;
+    WHL.lastTime     = now;
+  }, { passive: false });
+
+  ctr.addEventListener("touchend", () => {
+    WHL.isDragging = false;
+    // Convert touch velocity → projected distance, snap immediately
+    projectAndSnap(-WHL.lastVelocity * 120);
+  }, { passive: true });
+
+  // ── Mouse drag ─────────────────────────────────────────────
+  ctr.addEventListener("mousedown", e => {
+    clearTimeout(whlScrollTimer);
+    WHL.isDragging      = true;
+    WHL.dragStartY      = e.clientY;
+    WHL.dragStartOffset = WHL.offset;   // anchor to current *rendered* position
+    WHL.target          = WHL.offset;
+    WHL.lastY           = e.clientY;
+    WHL.lastTime        = Date.now();
+    WHL.lastVelocity    = 0;
+    WHL.velocity        = 0;
+    ctr.style.cursor    = "grabbing";
+    e.preventDefault();
+  });
+
+  window.addEventListener("mousemove", e => {
+    if (!WHL.isDragging) return;
+    const dy = WHL.dragStartY - e.clientY;
+    WHL.target = clampWhl(WHL.dragStartOffset + dy);
+    const now = Date.now();
+    const dt  = Math.max(1, now - WHL.lastTime);
+    WHL.lastVelocity = (e.clientY - WHL.lastY) / dt;
+    WHL.lastY        = e.clientY;
+    WHL.lastTime     = now;
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!WHL.isDragging) return;
+    WHL.isDragging = false;
+    const ctrEl = q("#wheel-container");
+    if (ctrEl) ctrEl.style.cursor = "";
+    // Convert drag velocity → projected distance, snap immediately
+    projectAndSnap(-WHL.lastVelocity * 90);
+  });
+
+  // ── Keyboard ───────────────────────────────────────────────
+  document.addEventListener("keydown", e => {
+    if (!q("#wheel-container")) return;
+    const h   = wheelItemH();
+    const idx = Math.round(WHL.target / h);
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      e.preventDefault();
+      WHL.target = clampWhl((idx + 1) * h);
+      WHL.velocity = 0;
+    }
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      WHL.target = clampWhl((idx - 1) * h);
+      WHL.velocity = 0;
+    }
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      const active = Math.round(WHL.offset / h);
+      if (WHL.videos[active]) whlPlay(WHL.videos[active]);
+    }
+  });
+
+  // ── Click ──────────────────────────────────────────────────
+  ctr.addEventListener("click", e => {
+    const item = e.target.closest(".wheel-item");
+    if (!item) return;
+    const clickedIdx = parseInt(item.dataset.index, 10);
+    const centreIdx  = Math.round(WHL.offset / wheelItemH());
+    if (Math.abs(clickedIdx - centreIdx) < 0.8) {
+      if (WHL.videos[clickedIdx]) whlPlay(WHL.videos[clickedIdx]);
+    } else {
+      WHL.velocity = 0;
+      WHL.target   = clampWhl(clickedIdx * wheelItemH());
+    }
+  });
+}
+
+// ── Animation Loop ────────────────────────────────────────────
+let whlLastActive = -1;
+
+function wheelTick() {
+  const h = wheelItemH();
+
+  if (!WHL.isDragging) {
+    // Target is always already snapped to an item boundary.
+    // Lerp offset toward it — stronger pull when close for a magnetic feel.
+    const diff = WHL.target - WHL.offset;
+    if (Math.abs(diff) > 0.4) {
+      const strength = Math.abs(diff) < h * 0.5 ? 0.28 : 0.20;
+      WHL.offset += diff * strength;
+    } else {
+      WHL.offset = WHL.target; // lock in exactly
+    }
+  } else {
+    WHL.offset = WHL.target; // follow finger/cursor directly during drag
+  }
+
+  // Position items
+  whlPositionItems(h);
+
+  // Detect active index change
+  const newIdx = Math.max(0, Math.min(WHL.videos.length - 1, Math.round(WHL.offset / h)));
+  if (newIdx !== whlLastActive) {
+    whlLastActive = newIdx;
+    whlSelectIndex(newIdx, false);
+  }
+
+  WHL.raf = requestAnimationFrame(wheelTick);
+}
+
+// ── Position items with 3D drum effect ───────────────────────
+function whlPositionItems(h) {
+  const ctr = q("#wheel-container");
+  if (!ctr) return;
+  const ctrH  = ctr.offsetHeight;
+  const items = qAll(".wheel-item");
+
+  items.forEach((item, i) => {
+    const dist    = i * h - WHL.offset;         // px from centre
+    const itemTop = ctrH / 2 - h / 2 + dist;   // absolute top in container
+
+    // Cull items far outside viewport
+    if (Math.abs(dist) > ctrH * 0.75) {
+      item.style.opacity    = "0";
+      item.style.visibility = "hidden";
+      item.classList.remove("is-active");
+      return;
+    }
+    item.style.visibility = "visible";
+
+    // Normalised distance: -1 = top edge, +1 = bottom edge
+    const t = Math.max(-1, Math.min(1, dist / (ctrH * 0.48)));
+
+    const angle   = t * 44;                            // rotateX degrees
+    const scale   = Math.max(0.68, 1 - Math.abs(t) * 0.24);
+    const opacity = Math.max(0.06, 1 - Math.abs(t) * 0.84);
+
+    item.style.top       = `${itemTop}px`;
+    item.style.transform = `rotateX(${angle}deg) scale(${scale})`;
+    item.style.opacity   = String(opacity.toFixed(3));
+
+    const isActive = Math.abs(t) < 0.13;
+    item.classList.toggle("is-active", isActive);
+  });
+}
+
+// ── Selection ─────────────────────────────────────────────────
+function whlSelectIndex(index, autoplay) {
+  if (index < 0 || index >= WHL.videos.length) return;
+  const video = WHL.videos[index];
+  WHL.activeIndex = index;
+
+  // Update desktop info panel
+  whlUpdateInfoPanel(video);
+
+  // Update mobile info bar
+  whlUpdateMobileInfo(video);
+
+  if (autoplay) whlPlay(video);
+}
+
+function whlUpdateInfoPanel(video) {
+  const panel = q("#wheel-player-info");
+  const embed = q("#wheel-player-embed");
+  if (!panel) return;
+
+  // ── Show thumbnail unless a video is actively playing ──────────
+  // If a video element exists but is paused/ended, treat it as idle and replace.
+  const existingVid = embed && embed.querySelector("video");
+  if (existingVid && existingVid.paused) {
+    if (WHL.hlsInst) { WHL.hlsInst.destroy(); WHL.hlsInst = null; }
+    embed.innerHTML = "";
+  }
+
+  if (embed && !embed.querySelector("video, iframe")) {
+    const thumb = video.thumbnail || "";
+    embed.innerHTML = thumb
+      ? `<div class="wpl-thumb-wrap" role="button" tabindex="0"
+              aria-label="Play ${esc(video.title)}"
+              style="background-image:url('${esc(thumb)}')">
+           <div class="wpl-thumb-overlay" aria-hidden="true"></div>
+           <button class="wpl-thumb-play-btn" tabindex="-1" aria-hidden="true">
+             <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+               <path d="M8 5v14l11-7z"/>
+             </svg>
+           </button>
+         </div>`
+      : `<div class="wheel-player-idle">
+           <div class="wheel-idle-icon" aria-hidden="true">
+             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+               <circle cx="12" cy="12" r="10"/>
+               <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+             </svg>
+           </div>
+           <p>Select a video to preview</p>
+         </div>`;
+
+    // Clicking the thumbnail area plays the video
+    const thumbWrap = embed.querySelector(".wpl-thumb-wrap");
+    if (thumbWrap) {
+      const play = () => whlPlay(video);
+      thumbWrap.addEventListener("click", play);
+      thumbWrap.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(); } });
+    }
+  }
+
+  const d       = parseWheelDate(video.date);
+  const dateStr = d ? d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "";
+  const durStr  = video.duration_seconds ? formatSeconds(video.duration_seconds) : (video.duration || "");
+
+  panel.innerHTML = `
+    <div class="wpi-date">${esc(dateStr)}</div>
+    <h2 class="wpi-title">${esc(video.title)}</h2>
+    ${video.description ? `<p class="wpi-desc">${esc(video.description)}</p>` : ""}
+    <div class="wpi-meta">
+      <span class="wpi-playlist-tag">${esc(video.playlist_name || "")}</span>
+      ${durStr ? `<span class="wpi-dur">${esc(durStr)}</span>` : ""}
+    </div>
+    <div class="wpi-actions">
+      <button class="wpi-play-btn" id="wpi-play-btn" aria-label="Play ${esc(video.title)}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        Play Video
+      </button>
+      <a class="wpi-playlist-link"
+         href="playlist.html?id=${encodeURIComponent(video.playlist_id)}&video=${encodeURIComponent(video.id)}">
+        View in Playlist
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M7 17L17 7M7 7h10v10"/>
+        </svg>
+      </a>
+    </div>`;
+
+  const playBtn = q("#wpi-play-btn");
+  if (playBtn) playBtn.addEventListener("click", () => whlPlay(video));
+}
+
+function whlUpdateMobileInfo(video) {
+  const el = q("#wheel-mobile-info");
+  if (!el) return;
+
+  const d       = parseWheelDate(video.date);
+  const dateStr = d ? d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "";
+
+  el.innerHTML = `
+    <div class="wmi-inner">
+      <div class="wmi-date">${esc(dateStr)}</div>
+      <h3 class="wmi-title">${esc(video.title)}</h3>
+      ${video.description ? `<p class="wmi-desc">${esc(video.description)}</p>` : ""}
+      <div class="wmi-actions">
+        <button class="wmi-play-btn" aria-label="Play ${esc(video.title)}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          Play
+        </button>
+        <a class="wmi-playlist-link"
+           href="playlist.html?id=${encodeURIComponent(video.playlist_id)}&video=${encodeURIComponent(video.id)}">
+          View in Playlist →
+        </a>
+      </div>
+    </div>`;
+
+  const btn = el.querySelector(".wmi-play-btn");
+  if (btn) btn.addEventListener("click", () => whlPlay(video));
+}
+
+// ── Playback ──────────────────────────────────────────────────
+function whlPlay(video) {
+  if (isMobileWheel()) {
+    openWheelSheet(video);
+  } else {
+    whlLoadPlayer(video, q("#wheel-player-embed"));
+  }
+}
+
+function whlLoadPlayer(video, container) {
+  if (!container) return;
+
+  // Destroy existing HLS
+  if (WHL.hlsInst) { WHL.hlsInst.destroy(); WHL.hlsInst = null; }
+
+  const base     = (CONFIG.mediaBaseUrl || "https://tube.tbg2.cloud").replace(/\/$/, "");
+  const resolve  = url => url ? (url.startsWith("http") ? url : base + url) : "";
+  const hlsUrl   = resolve(video.hls_url);
+  const mp4Url   = resolve(video.video_url);
+  const embedUrl = resolve(video.embed_url);
+
+  container.innerHTML = "";
+
+  if (!hlsUrl && !mp4Url) {
+    if (embedUrl) {
+      container.innerHTML = `<iframe src="${esc(embedUrl)}" allowfullscreen
+        allow="autoplay; fullscreen; picture-in-picture" frameborder="0"></iframe>`;
+    } else {
+      container.innerHTML = `<div class="wheel-player-idle"><p>Video not available.</p></div>`;
+    }
+    return;
+  }
+
+  container.innerHTML = `<video id="whl-video" controls playsinline preload="metadata" autoplay></video>`;
+  const vid = container.querySelector("#whl-video");
+
+  if (hlsUrl && window.Hls && window.Hls.isSupported()) {
+    WHL.hlsInst = new window.Hls({ startLevel: -1 });
+    WHL.hlsInst.loadSource(hlsUrl);
+    WHL.hlsInst.attachMedia(vid);
+    return;
+  }
+  if (hlsUrl && vid.canPlayType("application/vnd.apple.mpegurl")) {
+    vid.src = hlsUrl; return;
+  }
+  if (mp4Url) { vid.src = mp4Url; }
+}
+
+function openWheelSheet(video) {
+  const sheet    = q("#wheel-sheet");
+  const playerEl = q("#wheel-sheet-player");
+  const infoEl   = q("#wheel-sheet-info");
+  if (!sheet) return;
+
+  if (playerEl) whlLoadPlayer(video, playerEl);
+
+  if (infoEl) {
+    const d       = parseWheelDate(video.date);
+    const dateStr = d ? d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "";
+    infoEl.innerHTML = `
+      <div class="wsi-date">${esc(dateStr)}</div>
+      <h3 class="wsi-title">${esc(video.title)}</h3>
+      ${video.description ? `<p class="wsi-desc">${esc(video.description)}</p>` : ""}
+      <a class="wsi-playlist-link"
+         href="playlist.html?id=${encodeURIComponent(video.playlist_id)}&video=${encodeURIComponent(video.id)}">
+        View in Playlist →
+      </a>`;
+  }
+
+  sheet.classList.add("is-open");
+  sheet.removeAttribute("aria-hidden");
+  document.body.style.overflow = "hidden";
+
+  // Close on backdrop click
+  sheet.addEventListener("click", e => {
+    if (e.target === sheet) closeWheelSheet();
+  }, { once: true });
+}
+
+function closeWheelSheet() {
+  const sheet = q("#wheel-sheet");
+  if (!sheet) return;
+  sheet.classList.remove("is-open");
+  sheet.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  if (WHL.hlsInst) { WHL.hlsInst.destroy(); WHL.hlsInst = null; }
+  const playerEl = q("#wheel-sheet-player");
+  if (playerEl) playerEl.innerHTML = "";
 }

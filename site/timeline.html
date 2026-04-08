@@ -3,39 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Playlist — Family Archives</title>
+  <title>Timeline — Family Archives</title>
 
-  <!-- Primary Meta -->
-  <meta name="description" content="Family video playlist.">
+  <meta name="description" content="Browse all family videos chronologically — scroll through time with our immersive timeline.">
   <meta name="theme-color" content="#C8001A">
 
-  <!-- Open Graph -->
   <meta property="og:type"        content="website">
-  <meta property="og:title"       content="Playlist — Family Archives">
-  <meta property="og:description" content="Family video playlist.">
+  <meta property="og:title"       content="Timeline — Family Archives">
+  <meta property="og:description" content="Browse all family videos in chronological order.">
   <meta property="og:image"       content="branding/og-image.png">
-  <meta property="og:url"         content="">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="Playlist — Family Archives">
+  <meta name="twitter:title"       content="Timeline — Family Archives">
   <meta name="twitter:image"       content="branding/og-image.png">
 
-  <!-- Favicon -->
   <link rel="icon"             type="image/svg+xml" href="branding/favicon.svg">
   <link rel="icon"             type="image/png"     href="branding/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon"                      href="branding/apple-touch-icon.png">
   <link rel="manifest"                              href="branding/site.webmanifest">
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Cinzel:wght@400;600;700&display=swap">
 
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body data-page="playlist">
+<body data-page="timeline">
 
   <!-- ── Navigation ─────────────────────────────────────────── -->
   <nav class="nav" aria-label="Main navigation">
@@ -46,7 +40,7 @@
       </a>
       <ul class="nav-links" role="list">
         <li><a class="nav-link nav-link--internal" href="playlists.html">Playlists</a></li>
-        <li><a class="nav-link nav-link--timeline" href="timeline.html">Timeline</a></li>
+        <li><a class="nav-link nav-link--timeline nav-link--active" href="timeline.html">Timeline</a></li>
         <li>
           <button class="nav-search-btn" id="nav-search-btn" aria-label="Search videos">
             <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -64,7 +58,6 @@
         </a></li>
       </ul>
 
-      <!-- Mobile hamburger (hidden on desktop via CSS) -->
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
         <span class="ham-bar ham-bar-1"></span>
         <span class="ham-bar ham-bar-2"></span>
@@ -113,63 +106,109 @@
     </div>
   </div>
 
-  <!-- ── Playlist Header ────────────────────────────────────── -->
-  <header class="playlist-hero">
-    <a class="back-link" href="playlists.html">
-      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      All Playlists
-    </a>
+  <!-- ── Wheel Stage — fills viewport immediately ─────────────── -->
+  <div class="wheel-stage" id="wheel-stage">
 
-    <div class="playlist-hero-eyebrow" aria-hidden="true">Playlist</div>
-    <h1 class="playlist-hero-title" id="playlist-title">Loading…</h1>
-    <p  class="playlist-hero-desc"  id="playlist-desc"></p>
-    <div class="playlist-hero-meta" id="playlist-meta" aria-live="polite"></div>
-  </header>
+    <!-- ── Left: Wheel Picker ─────────────────────────────── -->
+    <div class="wheel-picker-wrap">
 
-  <!-- ── Player + Video List ────────────────────────────────── -->
-  <div class="player-section" id="player-section">
-    <div class="player-layout">
+      <div class="wheel-container" id="wheel-container" role="listbox"
+           aria-label="Videos in chronological order" aria-orientation="vertical">
 
-      <!-- Main player (sticky on desktop) -->
-      <div class="player-main">
-        <div class="player-embed-wrap" id="player-embed" aria-label="Video player">
-          <video id="video-player" controls playsinline preload="metadata">
-            <!-- src set by JS -->
-          </video>
+        <!-- Selection highlight bracket -->
+        <div class="wheel-selector" aria-hidden="true">
+          <div class="wheel-selector-line wheel-selector-line--top"></div>
+          <div class="wheel-selector-line wheel-selector-line--bottom"></div>
+          <div class="wheel-selector-glow" aria-hidden="true"></div>
         </div>
-        <div class="player-info">
-          <div class="player-info-bezel">
-            <div class="player-info-core">
-              <div class="player-info-stripe" aria-hidden="true">
-                <div class="player-info-stripe-sweep" aria-hidden="true"></div>
-              </div>
-              <div class="player-info-body">
-                <div class="player-info-eyebrow">
-                  <span class="player-date-tag" id="player-date"></span>
-                </div>
-                <h2 class="player-title" id="player-title"></h2>
-                <p  class="player-desc"  id="player-desc"></p>
-              </div>
-            </div>
+
+        <!-- Top gradient fade -->
+        <div class="wheel-mask wheel-mask--top" aria-hidden="true"></div>
+        <!-- Bottom gradient fade -->
+        <div class="wheel-mask wheel-mask--bottom" aria-hidden="true"></div>
+
+        <!-- Items injected by JS -->
+        <div class="wheel-list" id="wheel-list">
+          <div class="wheel-loading" id="wheel-loading" aria-label="Loading videos">
+            <div class="wheel-spinner" aria-hidden="true"></div>
+            <span>Loading archive…</span>
           </div>
         </div>
       </div>
 
-      <!-- Scrollable video list sidebar -->
-      <div class="video-sidebar">
-        <div class="video-sidebar-header">
-          Up next
-        </div>
-        <div class="video-list" id="video-list" role="list" aria-label="Videos in this playlist">
-          <!-- Populated by JS -->
+      <p class="wheel-hint" aria-hidden="true">
+        <span class="wheel-hint-desktop">Scroll · Drag · Arrow keys &nbsp;·&nbsp; Click center to play</span>
+        <span class="wheel-hint-mobile">Swipe to scroll &nbsp;·&nbsp; Tap center to play</span>
+      </p>
+    </div>
+
+    <!-- ── Right: Player Panel (desktop) ──────────────────── -->
+    <div class="wheel-player-panel" id="wheel-player-panel">
+
+      <!-- Video embed area -->
+      <div class="wheel-player-embed" id="wheel-player-embed">
+        <div class="wheel-player-idle" id="wheel-player-idle">
+          <div class="wheel-idle-icon" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <circle cx="12" cy="12" r="10"/>
+              <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <p>Scroll to a video, then press <strong>Play</strong></p>
         </div>
       </div>
 
+      <!-- Info / controls -->
+      <div class="wheel-player-info" id="wheel-player-info">
+        <!-- Populated by JS on wheel selection change -->
+        <div class="wpi-placeholder">
+          <div class="wpi-placeholder-line" style="width:40%"></div>
+          <div class="wpi-placeholder-line" style="width:70%;height:1.4rem;margin-top:0.4rem"></div>
+          <div class="wpi-placeholder-line" style="width:55%;margin-top:0.5rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Mobile: Info below wheel ───────────────────────── -->
+    <div class="wheel-mobile-info" id="wheel-mobile-info" aria-live="polite">
+      <!-- Populated by JS -->
+    </div>
+
+  </div><!-- /.wheel-stage -->
+
+  <!-- ── Mobile: Bottom-sheet player ───────────────────────── -->
+  <div class="wheel-sheet" id="wheel-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video player">
+    <div class="wheel-sheet-panel">
+      <div class="wheel-sheet-handle" aria-hidden="true"></div>
+      <button class="wheel-sheet-close" id="wheel-sheet-close" aria-label="Close player">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="wheel-sheet-player" id="wheel-sheet-player"></div>
+      <div class="wheel-sheet-info" id="wheel-sheet-info"></div>
     </div>
   </div>
+
+  <!-- ── About Band ────────────────────────────────────────── -->
+  <section class="page-about-band pab--timeline" aria-label="About this timeline">
+    <div class="page-about-band-inner">
+      <div class="pab-left">
+        <div class="pab-eyebrow" aria-hidden="true">Family Archives</div>
+        <h1 class="pab-title">Chronological <span>Timeline</span></h1>
+      </div>
+      <div class="pab-divider" aria-hidden="true"></div>
+      <div class="pab-right">
+        <div class="pab-stats" aria-label="Video count">
+          <div class="pab-stat">
+            <span class="pab-stat-value pab-stat--red" id="timeline-count">—</span>
+            <span class="pab-stat-label">Videos</span>
+          </div>
+        </div>
+        <p class="pab-desc">Every video in the archive, laid out in the order it was filmed — oldest to newest. Spin the reel to jump to any moment in time, then tap to watch. Use the arrow keys or scroll wheel on desktop, or swipe naturally on mobile.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer>
@@ -242,7 +281,6 @@
     </div>
   </div>
 
-  <!-- HLS.js for adaptive streaming in non-Safari browsers -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7/dist/fuse.min.js"></script>
   <script src="js/main.js"></script>
