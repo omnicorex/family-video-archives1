@@ -124,3 +124,9 @@
 @keyframes whl-spin {
   to { transform: rotate(360deg); }
 }
+
+/* ── Tricolor border spin (footer donate button) — 360° rotation = perfectly seamless ── */
+@keyframes tricolor-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}

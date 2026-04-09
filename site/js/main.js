@@ -652,9 +652,11 @@ function initSearch() {
   const isMac = /mac/i.test(navigator.platform);
   qAll(".nav-search-kbd").forEach(k => { k.textContent = isMac ? "\u2318K" : "Ctrl+K"; });
 
-  // Nav button
+  // Nav + footer search buttons
   const btn = q("#nav-search-btn");
   if (btn) btn.addEventListener("click", openSearch);
+  const footerBtn = q("#footer-search-btn");
+  if (footerBtn) footerBtn.addEventListener("click", openSearch);
 
   // Global shortcuts: Cmd/Ctrl+K or "/" (not in an input)
   document.addEventListener("keydown", e => {
