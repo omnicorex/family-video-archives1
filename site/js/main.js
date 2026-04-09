@@ -360,12 +360,17 @@ function loadVideo(video, index) {
 
   if (!wrap) return;
 
+  // ── Remove any stale overlay from the previous video ─────────
+  const staleOverlay = wrap.querySelector(".whl-loading-overlay");
+  if (staleOverlay) staleOverlay.remove();
+
   // ── Resolve relative URLs ─────────────────────────────────────
   const base     = (CONFIG.mediaBaseUrl || "https://tube.tbg2.cloud").replace(/\/$/, "");
   const resolve  = url => url ? (url.startsWith("http") ? url : base + url) : "";
   const hlsUrl   = resolve(video.hls_url);
   const mp4Url   = resolve(video.video_url);
   const embedUrl = resolve(video.embed_url);
+  const thumbUrl = resolve(video.thumbnail || "");
 
   // ── Destroy previous HLS instance ────────────────────────────
   if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
@@ -392,6 +397,32 @@ function loadVideo(video, index) {
     wrap.innerHTML = `<video id="video-player" controls playsinline preload="metadata"></video>`;
   }
   const vid = q("#video-player");
+
+  // ── Loading overlay — thumbnail + title + tricolor spinner ────
+  // Shown while the video buffers; fades out the moment playback starts.
+  const dateStr = formatDate(video.date) || "";
+  const overlay = document.createElement("div");
+  overlay.className = "whl-loading-overlay";
+  if (thumbUrl) overlay.style.backgroundImage = `url('${thumbUrl}')`;
+  overlay.innerHTML = `
+    <div class="whl-loading-blur"></div>
+    <div class="whl-loading-content">
+      ${dateStr  ? `<div class="whl-loading-date">${esc(dateStr)}</div>`   : ""}
+      ${video.title ? `<div class="whl-loading-title">${esc(video.title)}</div>` : ""}
+      <div class="whl-loading-spinner-wrap">
+        <div class="whl-loading-spinner"></div>
+      </div>
+    </div>`;
+  wrap.appendChild(overlay);
+
+  function removeOverlay() {
+    if (!overlay || overlay._removed) return;
+    overlay._removed = true;
+    overlay.classList.add("whl-loading-overlay--fade");
+    setTimeout(() => overlay.remove(), 480);
+  }
+  vid.addEventListener("playing", removeOverlay, { once: true });
+  vid.addEventListener("error",   removeOverlay, { once: true });
 
   // ── HLS via hls.js (Chrome, Firefox, Edge) ────────────────────
   if (hlsUrl && window.Hls && window.Hls.isSupported()) {
