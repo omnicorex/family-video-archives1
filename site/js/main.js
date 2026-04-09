@@ -429,17 +429,27 @@ function loadVideo(video, index) {
     hlsInstance = new window.Hls({ startLevel: -1 });
     hlsInstance.loadSource(hlsUrl);
     hlsInstance.attachMedia(vid);
+    // Early play() keeps us in the user-gesture stack (user just clicked the list item).
+    // hls.js queues it until the manifest is parsed and segments are buffered.
+    vid.play().catch(() => {});
+    hlsInstance.on(window.Hls.Events.MANIFEST_PARSED, () => {
+      vid.play().catch(() => {});
+    });
     return;
   }
 
   // ── Native HLS — Safari ───────────────────────────────────────
   if (hlsUrl && vid.canPlayType("application/vnd.apple.mpegurl")) {
     vid.src = hlsUrl;
+    vid.play().catch(() => {});
     return;
   }
 
   // ── Direct MP4 fallback ───────────────────────────────────────
-  if (mp4Url) { vid.src = mp4Url; }
+  if (mp4Url) {
+    vid.src = mp4Url;
+    vid.play().catch(() => {});
+  }
 }
 
 function showError(msg) {
