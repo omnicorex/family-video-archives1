@@ -159,24 +159,180 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.55rem;
+  gap: 0.45rem;
 }
+
+/* Base pill — mirrors the nav link pills exactly */
 .footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  display: inline-block;
-  transition: color     0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0.38rem 1rem;
+  border-radius: 99px;
+  border: 1px solid transparent;
+  transition:
+    background   0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color        0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform    0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.footer-link--internal { color: var(--red-text); opacity: 0.8; }
-.footer-link--internal:hover { opacity: 1; transform: translateX(-3px); }
-.footer-link--timeline { color: var(--blue-text); opacity: 0.75; }
-.footer-link--timeline:hover { opacity: 1; transform: translateX(-3px); }
-.footer-link--external { color: var(--orange-text); opacity: 0.75; }
-.footer-link--external:hover { opacity: 1; transform: translateX(-3px); }
+
+/* Playlists — red (matches nav-link--internal) */
+.footer-link--internal {
+  background: rgba(204, 0, 24, 0.10);
+  color: var(--red-text);
+  border-color: rgba(255, 68, 85, 0.22);
+}
+.footer-link--internal:hover {
+  background: rgba(204, 0, 24, 0.18);
+  border-color: rgba(255, 68, 85, 0.50);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Timeline — blue (matches nav-link--timeline) */
+.footer-link--timeline {
+  background: rgba(0, 48, 168, 0.10);
+  color: var(--blue-text);
+  border-color: rgba(102, 153, 255, 0.22);
+}
+.footer-link--timeline:hover {
+  background: rgba(0, 48, 168, 0.20);
+  border-color: rgba(102, 153, 255, 0.50);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Search — orange pill (mirrors nav-search-btn) */
+.footer-link--search {
+  background: transparent;
+  color: var(--orange-text);
+  border-color: rgba(245, 168, 48, 0.25);
+  cursor: pointer;
+  font-family: inherit;
+}
+.footer-link--search:hover {
+  background: rgba(245, 168, 48, 0.12);
+  border-color: rgba(245, 168, 48, 0.50);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Support strip — full-width centered band ── */
+.footer-support {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 2rem 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+.footer-support-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Tricolor gradient-border donate button */
+.footer-donate-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;            /* clips the spinning conic-gradient square */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 2.2rem;
+  border-radius: 99px;
+  background: transparent;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    color      0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform  0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * Spinning conic-gradient square — positioned at center, large enough to
+ * reach all four corners regardless of button width.  A full 360° rotation
+ * is geometrically seamless — no jump at the loop boundary.
+ */
+.footer-donate-btn::before {
+  content: '';
+  position: absolute;
+  top:  50%;
+  left: 50%;
+  /* Square must reach every corner: diagonal ≈ √2 × 100% ≈ 142% → use 200% for safety */
+  width:  200%;
+  height: 200%;
+  border-radius: 0;            /* square, not pill */
+  background: conic-gradient(
+    from 0deg,
+    #EE1030,
+    #3366DD 120deg,
+    #F09010 240deg,
+    #EE1030 360deg
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  z-index: -2;
+  animation: tricolor-spin 3.5s linear infinite;
+}
+
+/* Dark interior fill — sits above the conic layer, creates the "border" illusion */
+.footer-donate-btn::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 99px;
+  background: var(--bg-card);
+  z-index: -1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+.footer-donate-btn:hover {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+}
+.footer-donate-btn:active {
+  transform: scale(0.97);
+}
+
+/* Heart icon inside the button */
+.footer-donate-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.footer-donate-btn:hover svg {
+  transform: scale(1.25);
+}
+
+/* ── Separator between main and support ── */
+.footer-support-sep {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+  z-index: 1;
+}
 
 /* Made with ♥ by Omnicorex */
 .footer-credit {
@@ -214,13 +370,6 @@ footer.in-view .ftc-orange { transform: scaleX(1); }
   max-width: 280px;
   margin-top: 0.5rem;
 }
-
-/* ── Footer donate link ── */
-.footer-link--donate {
-  color: var(--red-text);
-  opacity: 0.75;
-}
-.footer-link--donate:hover { opacity: 1; transform: translateX(-3px); }
 
 /* ── Bottom bar ── */
 .footer-bottom {

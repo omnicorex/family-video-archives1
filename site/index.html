@@ -57,12 +57,6 @@
             <kbd class="nav-search-kbd">⌘K</kbd>
           </button>
         </li>
-        <li><a class="nav-link nav-link--external" href="https://tube.tbg2.cloud" target="_blank" rel="noopener noreferrer">
-          Source
-          <svg aria-hidden="true" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M7 17L17 7M7 7h10v10"/>
-          </svg>
-        </a></li>
       </ul>
 
       <!-- Mobile hamburger -->
@@ -96,17 +90,6 @@
               <span class="mml-num" aria-hidden="true">03</span>
               <span class="mml-text">Search</span>
             </button>
-          </li>
-          <li class="mobile-menu-item" style="--i:3">
-            <a class="mobile-menu-link mobile-menu-link--orange" href="https://tube.tbg2.cloud" target="_blank" rel="noopener noreferrer" data-close-menu>
-              <span class="mml-num" aria-hidden="true">04</span>
-              <span class="mml-text">
-                Source
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink:0;margin-left:0.25rem">
-                  <path d="M7 17L17 7M7 7h10v10"/>
-                </svg>
-              </span>
-            </a>
           </li>
         </ul>
       </nav>
@@ -247,10 +230,12 @@
         <nav class="footer-links" aria-label="Footer navigation">
           <a class="footer-link footer-link--internal" href="playlists.html">Playlists</a>
           <a class="footer-link footer-link--timeline" href="timeline.html">Timeline</a>
-          <a class="footer-link footer-link--external" href="https://tube.tbg2.cloud"
-             target="_blank" rel="noopener noreferrer">Source ↗</a>
-          <a class="footer-link footer-link--donate" data-donate href="https://donate.stripe.com/5kQ14p90I5DjecR4l57EQ01"
-             target="_blank" rel="noopener noreferrer">Support ♥</a>
+          <button class="footer-link footer-link--search" id="footer-search-btn" aria-label="Search videos">
+            <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            Search
+          </button>
         </nav>
         <div class="footer-credit">
           <span>Crafted with</span>
@@ -260,6 +245,20 @@
              target="_blank" rel="noopener noreferrer">Omnicorex</a>
         </div>
       </div>
+    </div>
+
+    <div class="footer-support-sep" aria-hidden="true"></div>
+
+    <div class="footer-support">
+      <span class="footer-support-label">Keep the archive alive</span>
+      <a class="footer-donate-btn" data-donate
+         href="https://donate.stripe.com/5kQ14p90I5DjecR4l57EQ01"
+         target="_blank" rel="noopener noreferrer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        Support this archive
+      </a>
     </div>
 
     <div class="footer-bottom">
