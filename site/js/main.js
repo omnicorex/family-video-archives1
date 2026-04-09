@@ -1363,6 +1363,7 @@ function whlLoadPlayer(video, container) {
   const hlsUrl   = resolve(video.hls_url);
   const mp4Url   = resolve(video.video_url);
   const embedUrl = resolve(video.embed_url);
+  const thumbUrl = resolve(video.thumbnail || "");
 
   container.innerHTML = "";
 
@@ -1376,11 +1377,40 @@ function whlLoadPlayer(video, container) {
     return;
   }
 
+  // Build the loading overlay (thumbnail + title + tricolor spinner).
+  // It sits on top of the video and fades out the moment playback starts.
+  const d       = parseWheelDate(video.date);
+  const dateStr = d ? d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "";
+  const bgStyle = thumbUrl ? `style="background-image:url('${esc(thumbUrl)}')"` : "";
+
   // No autoplay attribute — mobile browsers block unmuted autoplay.
   // We call vid.play() explicitly, which is allowed because we're still
   // inside the user-gesture call stack (tap on play button).
-  container.innerHTML = `<video id="whl-video" controls playsinline preload="metadata"></video>`;
-  const vid = container.querySelector("#whl-video");
+  container.innerHTML = `
+    <video id="whl-video" controls playsinline preload="metadata"></video>
+    <div class="whl-loading-overlay" id="whl-loading-overlay" ${bgStyle}>
+      <div class="whl-loading-blur"></div>
+      <div class="whl-loading-content">
+        ${dateStr ? `<div class="whl-loading-date">${esc(dateStr)}</div>` : ""}
+        ${video.title ? `<div class="whl-loading-title">${esc(video.title)}</div>` : ""}
+        <div class="whl-loading-spinner-wrap">
+          <div class="whl-loading-spinner"></div>
+        </div>
+      </div>
+    </div>`;
+
+  const vid     = container.querySelector("#whl-video");
+  const overlay = container.querySelector("#whl-loading-overlay");
+
+  // Fade and remove the overlay once playback actually starts (or on error)
+  function removeOverlay() {
+    if (!overlay || overlay._removed) return;
+    overlay._removed = true;
+    overlay.classList.add("whl-loading-overlay--fade");
+    setTimeout(() => overlay.remove(), 480);
+  }
+  vid.addEventListener("playing", removeOverlay, { once: true });
+  vid.addEventListener("error",   removeOverlay, { once: true });
 
   if (hlsUrl && window.Hls && window.Hls.isSupported()) {
     WHL.hlsInst = new window.Hls({ startLevel: -1 });
