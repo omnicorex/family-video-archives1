@@ -1376,19 +1376,35 @@ function whlLoadPlayer(video, container) {
     return;
   }
 
-  container.innerHTML = `<video id="whl-video" controls playsinline preload="metadata" autoplay></video>`;
+  // No autoplay attribute — mobile browsers block unmuted autoplay.
+  // We call vid.play() explicitly, which is allowed because we're still
+  // inside the user-gesture call stack (tap on play button).
+  container.innerHTML = `<video id="whl-video" controls playsinline preload="metadata"></video>`;
   const vid = container.querySelector("#whl-video");
 
   if (hlsUrl && window.Hls && window.Hls.isSupported()) {
     WHL.hlsInst = new window.Hls({ startLevel: -1 });
     WHL.hlsInst.loadSource(hlsUrl);
     WHL.hlsInst.attachMedia(vid);
+    // MANIFEST_PARSED fires async — by then the gesture chain is broken on
+    // some mobile browsers, so we also try an early play() here (hls.js
+    // queues it internally until enough data is buffered).
+    vid.play().catch(() => {});
+    WHL.hlsInst.on(window.Hls.Events.MANIFEST_PARSED, () => {
+      vid.play().catch(() => {});
+    });
     return;
   }
   if (hlsUrl && vid.canPlayType("application/vnd.apple.mpegurl")) {
-    vid.src = hlsUrl; return;
+    // iOS Safari — native HLS; play() here is within the gesture stack.
+    vid.src = hlsUrl;
+    vid.play().catch(() => {});
+    return;
   }
-  if (mp4Url) { vid.src = mp4Url; }
+  if (mp4Url) {
+    vid.src = mp4Url;
+    vid.play().catch(() => {});
+  }
 }
 
 function openWheelSheet(video) {
