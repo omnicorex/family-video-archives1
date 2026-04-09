@@ -1,0 +1,261 @@
+/* ============================================================
+   FOOTER — Celebratory family centrepiece
+   ============================================================ */
+footer {
+  position: relative;
+  background: var(--bg-surface);
+  padding: 4.5rem var(--pad-x) 2.25rem;
+  overflow: hidden;
+}
+
+/* Warm ambient corner glows */
+footer::before {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(204,0,24,0.07) 0%, transparent 68%);
+  pointer-events: none;
+}
+footer::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(0,48,168,0.06) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+/* ── Animated tricolor stripe across the very top ── */
+.footer-tricolor {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  display: flex;
+  overflow: hidden;
+}
+.ftc-red, .ftc-blue, .ftc-orange {
+  flex: 1;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ftc-red    { background: var(--red);    transition-delay: 0.05s; }
+.ftc-blue   { background: var(--blue);   transition-delay: 0.20s; }
+.ftc-orange { background: var(--orange); transition-delay: 0.35s; }
+footer.in-view .ftc-red,
+footer.in-view .ftc-blue,
+footer.in-view .ftc-orange { transform: scaleX(1); }
+
+/* ── Main content ── */
+.footer-main {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Logo centrepiece ── */
+.footer-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Outer bezel */
+.footer-logo-bezel {
+  padding: 7px;
+  border-radius: 26px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.footer-logo-bezel:hover {
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.65),
+    0 0 40px rgba(245,168,48,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Inner shell — 3D perspective drift, like a display piece being slowly rotated */
+.footer-logo-shell {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;           /* shimmer pseudo-element anchors here */
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+  animation: logo3DDrift 10s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+/* Diagonal shimmer sweep — light catching the surface every 7s */
+.footer-logo-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    112deg,
+    transparent       20%,
+    rgba(255,255,255,0.16) 47%,
+    rgba(255,255,255,0.07) 53%,
+    transparent       80%
+  );
+  transform: translateX(-220%) skewX(-18deg);
+  animation: logoShimmer 7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+/* Logo image — color glow stays on the image itself */
+.footer-logo-img {
+  display: block;
+  width: 140px;
+  height: 140px;
+  animation: logoColorGlow 9s ease-in-out infinite;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Hover: pause drift feel — pull toward viewer */
+.footer-logo-bezel:hover .footer-logo-shell {
+  animation-play-state: paused;
+}
+.footer-logo-bezel:hover .footer-logo-img {
+  transform: scale(1.06);
+}
+
+.footer-brand-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+.footer-tagline {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+/* ── Right aside ── */
+.footer-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rem;
+  padding-top: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+}
+.footer-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  display: inline-block;
+  transition: color     0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.footer-link--internal { color: var(--red-text); opacity: 0.8; }
+.footer-link--internal:hover { opacity: 1; transform: translateX(-3px); }
+.footer-link--timeline { color: var(--blue-text); opacity: 0.75; }
+.footer-link--timeline:hover { opacity: 1; transform: translateX(-3px); }
+.footer-link--external { color: var(--orange-text); opacity: 0.75; }
+.footer-link--external:hover { opacity: 1; transform: translateX(-3px); }
+
+/* Made with ♥ by Omnicorex */
+.footer-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.footer-heart {
+  color: var(--red-text);
+  display: inline-block;
+  font-size: 0.9rem;
+  animation: heartPulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  will-change: transform;
+}
+.footer-omnicorex {
+  font-weight: 800;
+  color: var(--orange-text);
+  letter-spacing: 0.02em;
+  transition: color      0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              text-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.footer-omnicorex:hover {
+  color: #fff;
+  text-shadow: 0 0 14px rgba(245,168,48,0.65);
+}
+
+/* ── Footer about blurb ── */
+.footer-about {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 280px;
+  margin-top: 0.5rem;
+}
+
+/* ── Footer donate link ── */
+.footer-link--donate {
+  color: var(--red-text);
+  opacity: 0.75;
+}
+.footer-link--donate:hover { opacity: 1; transform: translateX(-3px); }
+
+/* ── Bottom bar ── */
+.footer-bottom {
+  max-width: var(--max-w);
+  margin: 1.75rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+.footer-copy {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+
+/* Film sprocket dots — symmetrical wave */
+.footer-sprockets {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.footer-sprockets span {
+  display: block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border-hover);
+  animation: sprocketWave 2.2s ease-in-out infinite;
+}
+.footer-sprockets span:nth-child(1) { animation-delay: 0.00s; }
+.footer-sprockets span:nth-child(2) { animation-delay: 0.12s; }
+.footer-sprockets span:nth-child(3) { animation-delay: 0.24s; }
+.footer-sprockets span:nth-child(4) { animation-delay: 0.36s; }
+.footer-sprockets span:nth-child(5) { animation-delay: 0.48s; }
+.footer-sprockets span:nth-child(6) { animation-delay: 0.36s; }
+.footer-sprockets span:nth-child(7) { animation-delay: 0.24s; }
+.footer-sprockets span:nth-child(8) { animation-delay: 0.12s; }

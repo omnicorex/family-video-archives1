@@ -1,0 +1,323 @@
+/* ============================================================
+   PLAYLISTS SECTION
+   ============================================================ */
+.playlists-section {
+  padding: 5rem var(--pad-x) 6rem;
+}
+.section-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 900;
+  color: var(--text-primary);
+}
+.section-title span { color: var(--orange-text); }
+.section-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Masonry fluid grid via CSS columns ── */
+.playlists-grid {
+  columns: 3;
+  column-gap: 1.25rem;
+}
+
+/* ============================================================
+   PLAYLIST CARD
+   ============================================================ */
+.playlist-card {
+  /* Masonry column behaviour */
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+  /* Card styles */
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* reveal initial state */
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity     0.55s var(--ease),
+    transform   0.55s var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow   var(--dur) var(--ease);
+}
+.playlist-card.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.playlist-card:hover {
+  border-color: rgba(200, 0, 26, 0.5);
+  box-shadow: 0 20px 56px rgba(0,0,0,0.45),
+              0 0 0 1px rgba(200, 0, 26, 0.18),
+              inset 0 1px 0 rgba(255,255,255,0.04);
+  transform: translateY(-4px);
+}
+
+/* ── Thumbnail area — fills card, body stays fixed height ─────── */
+.card-thumb {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+/* Vary aspect ratio by position — creates natural height rhythm for masonry */
+.playlist-card:nth-child(3n+1) .card-thumb { aspect-ratio: 4 / 3; }
+.playlist-card:nth-child(3n+2) .card-thumb { aspect-ratio: 16 / 9; }
+.playlist-card:nth-child(3n+3) .card-thumb { aspect-ratio: 1 / 1; }
+
+/* Single-image fallback */
+.card-thumb > img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s var(--ease);
+}
+.playlist-card:hover .card-thumb > img { transform: scale(1.06); }
+
+/* ── Collage grid ───────────────────────────────────────────── */
+.card-collage {
+  width: 100%; height: 100%;
+  display: grid;
+  gap: 2px;
+  background: var(--bg-base); /* gap colour */
+}
+
+/* 1 image — full frame */
+.card-collage[data-count="1"] {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* 2 images — side by side */
+.card-collage[data-count="2"] {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* 3 images — large left, two stacked right */
+.card-collage[data-count="3"] {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.card-collage[data-count="3"] .collage-cell:first-child {
+  grid-row: 1 / 3;
+}
+
+/* 4 images — 2×2 */
+.card-collage[data-count="4"] {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.collage-cell {
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-card);
+  min-height: 0; /* prevent grid blowout */
+}
+.collage-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.65s var(--ease);
+}
+.playlist-card:hover .collage-cell img { transform: scale(1.06); }
+
+/* Placeholder when no thumbnails */
+.card-thumb-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-thumb-placeholder svg { opacity: 0.12; }
+
+/* Gradient overlay sits above collage */
+.card-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(6, 6, 14, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Card body — fixed-height info strip, never grows ────────── */
+.card-body {
+  padding: 0.9rem 1.1rem 1rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.card-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--blue-text);
+  margin-bottom: 0.5rem;
+}
+.card-eyebrow::before {
+  content: '▶';
+  font-size: 0.45rem;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: triColorGlow 4s ease-in-out infinite;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--orange-text);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 0.4rem;
+  /* Prevent overlong titles from blowing up the info bar */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Card footer — count left, watch right ─────────────────── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  gap: 0.5rem;
+}
+
+.card-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--blue-text);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.card-watch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color var(--dur) var(--ease);
+}
+.card-watch-btn svg { transition: transform var(--dur) var(--ease); flex-shrink: 0; }
+.playlist-card:hover .card-watch-btn { color: var(--red); }
+.playlist-card:hover .card-watch-btn svg { transform: translateX(4px); }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 6rem 2rem;
+  gap: 1rem;
+  color: var(--text-secondary);
+}
+.empty-state svg { opacity: 0.2; margin-bottom: 0.5rem; }
+.empty-state h3  { font-size: 1.5rem; color: var(--text-primary); }
+.empty-state p   { font-size: 0.9rem; max-width: 40ch; line-height: 1.7; }
+.empty-state code {
+  display: inline-block;
+  margin-top: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--orange);
+}
+
+/* ============================================================
+   LOADING SKELETON
+   ============================================================ */
+.skeleton-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+}
+.skel-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.skel-card:nth-child(1) { grid-column: span 7; }
+.skel-card:nth-child(2) { grid-column: span 5; }
+.skel-card:nth-child(3) { grid-column: span 5; }
+.skel-card:nth-child(4) { grid-column: span 7; }
+
+.skel-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(90deg,
+    var(--bg-card) 0%,
+    var(--bg-card-hover) 50%,
+    var(--bg-card) 100%);
+  background-size: 300% 100%;
+  animation: shimmer 1.6s ease infinite;
+}
+.skel-body { padding: 1.4rem 1.5rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.skel-line {
+  height: 13px;
+  border-radius: 4px;
+  background: linear-gradient(90deg,
+    var(--bg-card) 0%,
+    var(--bg-card-hover) 50%,
+    var(--bg-card) 100%);
+  background-size: 300% 100%;
+  animation: shimmer 1.6s ease infinite;
+}

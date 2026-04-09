@@ -1,0 +1,274 @@
+/* ============================================================
+   HERO — Split layout, left-aligned
+   ============================================================ */
+.hero {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 55% 1fr;
+  align-items: center;
+  gap: 4rem;
+  padding: var(--nav-h) var(--pad-x) 4rem;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+/* ── Hero content ── */
+.hero-content { padding-top: 2rem; }
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+  margin-bottom: 1.75rem;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.15s forwards;
+}
+.hero-eyebrow::before {
+  content: '▶';
+  font-size: 0.55rem;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: triColorGlow 4s ease-in-out infinite;
+}
+
+.hero-title {
+  font-size: clamp(3.8rem, 6.5vw, 7.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--orange-text);      /* warm amber as the default heading colour */
+  margin-bottom: 1.75rem;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.3s forwards;
+}
+/* The word "Archives." drops to a rich blue */
+.hero-title .accent-blue   { color: var(--blue-text); }
+/* Keep other accents for any inline spans */
+.hero-title .accent-red    { color: var(--red-text); }
+.hero-title .accent-orange { color: var(--orange-text); }
+
+.hero-subtitle {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  font-weight: 500;
+  color: var(--text-secondary);
+  max-width: 44ch;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.45s forwards;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--orange);
+  color: #0A0608;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.85rem 1.9rem;
+  border-radius: 5px;
+  transition: background var(--dur) var(--ease),
+              transform  var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.6s forwards;
+}
+.hero-cta:hover {
+  background: var(--orange-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 44px rgba(208, 120, 0, 0.4);
+}
+.hero-cta:active { transform: scale(0.98); }
+.hero-cta svg { transition: transform var(--dur) var(--ease); }
+.hero-cta:hover svg { transform: translateX(4px); }
+
+/* ── Hero secondary CTA ────────────────────────────────────── */
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.6s forwards;
+}
+.hero-cta--secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  color: var(--blue-text);
+  border: 1px solid rgba(102, 153, 255, 0.30);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.6rem;
+  border-radius: 5px;
+  transition: background var(--dur) var(--ease),
+              border-color var(--dur) var(--ease),
+              color var(--dur) var(--ease),
+              transform var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+  /* Override the primary .hero-cta animation since it's already in .hero-ctas */
+  opacity: 1;
+  animation: none;
+}
+.hero-cta--secondary:hover {
+  background:   rgba(0, 48, 168, 0.18);
+  border-color: rgba(102, 153, 255, 0.55);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 48, 168, 0.25);
+}
+/* Reset the individual animation on primary CTA when inside .hero-ctas */
+.hero-ctas .hero-cta {
+  opacity: 1;
+  animation: none;
+}
+
+/* ── Hero visual ── */
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 1s var(--ease) 0.5s forwards;
+}
+
+.hero-art {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+}
+
+.hero-art-frame {
+  border-radius: 10px;
+  overflow: hidden;
+  /* Layered box-shadow: fine inner rim → main depth shadow → colour glow */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 28px 72px rgba(0,0,0,0.75),
+    0 0 48px rgba(204,0,24,0.10),
+    0 0 0 3px rgba(255,255,255,0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── Film-strip sprocket rails ── */
+.film-rail {
+  flex-shrink: 0;
+  height: 28px;
+  background: #030307;
+  /* Punched-hole effect: repeating semi-transparent circles */
+  background-image:
+    radial-gradient(circle, rgba(180,160,120,0.18) 38%, transparent 39%);
+  background-size: 26px 100%;
+  background-position: 13px center;
+  background-repeat: repeat-x;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.film-rail:first-child { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.film-rail:last-child  { border-top:    1px solid rgba(255,255,255,0.05); }
+
+/* Tiny text label printed on the rail edge — like real film stock */
+.film-rail-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(180,160,120,0.30);
+  pointer-events: none;
+  user-select: none;
+}
+.film-rail-label--right { text-align: center; }
+
+/* ── Video screen inside the film gate ── */
+.film-screen {
+  position: relative;
+  /* Match the video's native 1:1 square aspect ratio */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+}
+
+.film-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Vignette — pulls the edges into darkness so the crop feels designed */
+.film-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 42%,
+    rgba(0,0,0,0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* Subtle scanlines add an analogue / projected-film texture */
+.film-scanlines {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.045) 3px,
+    rgba(0,0,0,0.045) 4px
+  );
+  pointer-events: none;
+}
+
+/* Floating badge */
+.hero-art-badge {
+  position: absolute;
+  bottom: -1rem;
+  left: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: 8px;
+  padding: 0.7rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4),
+              inset 0 1px 0 rgba(255,255,255,0.06);
+  animation: float 4s ease-in-out infinite;
+}
+.hero-art-badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 2s ease-in-out infinite;
+}
+.hero-art-badge span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.hero-art-badge strong {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}

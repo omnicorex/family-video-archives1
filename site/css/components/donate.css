@@ -1,0 +1,190 @@
+/* ============================================================
+   DONATE SECTION
+   ============================================================ */
+.donate-section {
+  padding: 1rem var(--pad-x) 5rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Outer bezel — gradient border matching the design system */
+.donate-card-bezel {
+  max-width: 600px;
+  width: 100%;
+  background: linear-gradient(
+    140deg,
+    rgba(204, 0, 24,  0.28) 0%,
+    rgba(0,  48, 168, 0.20) 48%,
+    rgba(208,120, 0,  0.28) 100%
+  );
+  border-radius: 28px;
+  padding: 1.5px;
+  box-shadow:
+    0 32px 90px rgba(204,  0, 24, 0.09),
+    0 12px 36px rgba(0,   48,168, 0.09),
+    0  0    0  1px rgba(242,232,208, 0.04);
+  /* Scroll-reveal — starts hidden, JS adds .revealed */
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity   0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.donate-card-bezel.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Inner core */
+.donate-card-core {
+  background: var(--bg-card);
+  border-radius: 26.5px;
+  overflow: hidden;
+}
+
+/* Armenian tri-color stripe — same as player-info */
+.donate-stripe {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--red)           0%,
+    var(--red-bright)   18%,
+    var(--blue-bright)  45%,
+    var(--blue)         58%,
+    var(--orange)       82%,
+    var(--orange-bright)100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+/* Shimmer sweep — same motion as the player card stripe */
+.donate-stripe::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent          0%,
+    rgba(255,255,255,0.55) 50%,
+    transparent          100%
+  );
+  transform: translateX(-100%);
+  animation: donate-stripe-sweep 4s cubic-bezier(0.4, 0, 0.6, 1) 1.2s infinite;
+}
+
+/* Body */
+.donate-body {
+  padding: 2.75rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+
+/* Film-reel icon container */
+.donate-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: rgba(204, 0, 24, 0.08);
+  border: 1px solid rgba(255, 68, 85, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red-text);
+  /* Gentle heartbeat */
+  animation: donate-icon-pulse 3.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  will-change: transform;
+}
+
+/* Eyebrow pill */
+.donate-eyebrow {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(242, 232, 208, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0.28rem 0.9rem;
+}
+
+.donate-title {
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.donate-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 400px;
+}
+
+/* ── The donate CTA — Button-in-Button architecture ── */
+.donate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.7rem 0.7rem 1.6rem;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #CC0018 0%, #D07800 100%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  animation: donate-btn-breathe 2.8s ease-in-out infinite;
+  will-change: transform;
+  transition:
+    transform  0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.donate-btn:hover {
+  animation: none;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:
+    0 10px 40px rgba(204, 0, 24, 0.50),
+    0  2px  8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.donate-btn:active { transform: scale(0.97); animation: none; }
+
+/* Nested icon circle — Button-in-Button */
+.donate-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.donate-btn:hover .donate-btn-icon {
+  transform: translate(2px, -2px) scale(1.12);
+}
+
+/* Small print */
+.donate-disclaimer {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .donate-body { padding: 2rem 1.5rem 1.75rem; }
+  .donate-title { font-size: 1.35rem; }
+}

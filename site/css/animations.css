@@ -1,0 +1,126 @@
+/* ============================================================
+   ANIMATIONS — All @keyframes
+   ============================================================ */
+
+/* ── Hamburger animations ── */
+@keyframes ham-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(204, 0, 24, 0.18),
+      0 0  8px rgba(204, 0, 24, 0.10),
+      0 0 14px rgba(0, 48, 168, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(204, 0, 24, 0.40),
+      0 0 14px rgba(204, 0, 24, 0.22),
+      0 0 24px rgba(0, 48, 168, 0.18);
+  }
+}
+
+/* scaleX-only drift — zero layout work, runs entirely on GPU compositor */
+@keyframes ham-bar-drift {
+  0%, 100% { transform: scaleX(1);    }
+  50%       { transform: scaleX(0.72); }
+}
+
+/* ── General animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes triColorGlow {
+  0%,  15% { color: var(--orange-text); text-shadow: 0 0 10px rgba(208,120,0,0.9), 0 0 20px rgba(208,120,0,0.4); }
+  33%, 48% { color: var(--red-text);    text-shadow: 0 0 10px rgba(204,0,24,0.9),  0 0 20px rgba(204,0,24,0.4);  }
+  66%, 81% { color: var(--blue-text);   text-shadow: 0 0 10px rgba(51,102,221,0.9),0 0 20px rgba(51,102,221,0.4);}
+  100%      { color: var(--orange-text); text-shadow: 0 0 10px rgba(208,120,0,0.9), 0 0 20px rgba(208,120,0,0.4); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.85); }
+}
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* Logo drifts in 3D — like a physical object on a slow display turntable */
+@keyframes logo3DDrift {
+  0%   { transform: perspective(500px) rotateX(0deg)   rotateY(0deg)   rotateZ(0deg);   }
+  20%  { transform: perspective(500px) rotateX(2.5deg) rotateY(-6deg)  rotateZ(0.5deg); }
+  45%  { transform: perspective(500px) rotateX(-2deg)  rotateY(4deg)   rotateZ(-0.4deg);}
+  65%  { transform: perspective(500px) rotateX(3deg)   rotateY(2.5deg) rotateZ(0.6deg); }
+  85%  { transform: perspective(500px) rotateX(-1.5deg)rotateY(-4deg)  rotateZ(-0.3deg);}
+  100% { transform: perspective(500px) rotateX(0deg)   rotateY(0deg)   rotateZ(0deg);   }
+}
+/* Shimmer streak sweeps diagonally every 7s, pauses for 4s between passes */
+@keyframes logoShimmer {
+  0%,  57% { transform: translateX(-220%) skewX(-18deg); }
+  78%       { transform: translateX(280%)  skewX(-18deg); }
+  100%      { transform: translateX(280%)  skewX(-18deg); }
+}
+@keyframes logoColorGlow {
+  0%,  33% { filter: drop-shadow(0 0 20px rgba(154,  0,   0, 0.60)) drop-shadow(0 8px 32px rgba(0,0,0,0.45)); }
+  34%, 66% { filter: drop-shadow(0 0 20px rgba( 33, 64, 154, 0.65)) drop-shadow(0 8px 32px rgba(0,0,0,0.45)); }
+  67%, 99% { filter: drop-shadow(0 0 20px rgba(241, 90,  41, 0.60)) drop-shadow(0 8px 32px rgba(0,0,0,0.45)); }
+  100%     { filter: drop-shadow(0 0 20px rgba(154,  0,   0, 0.60)) drop-shadow(0 8px 32px rgba(0,0,0,0.45)); }
+}
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1);    }
+  12%       { transform: scale(1.45); }
+  25%       { transform: scale(1.05); }
+  38%       { transform: scale(1.25); }
+  55%       { transform: scale(1);    }
+}
+@keyframes sprocketWave {
+  0%, 100% { opacity: 0.25; transform: scale(1);    }
+  50%       { opacity: 1;    transform: scale(1.35); }
+}
+
+/* ── Donate animations ── */
+@keyframes donate-stripe-sweep {
+  0%   { transform: translateX(-100%); }
+  40%  { transform: translateX(260%);  }
+  100% { transform: translateX(260%);  }
+}
+@keyframes donate-icon-pulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0  0   0 rgba(204,0,24,0);    }
+  50%       { transform: scale(1.06); box-shadow: 0 0 18px 4px rgba(204,0,24,0.18); }
+}
+@keyframes donate-btn-breathe {
+  0%, 100% { box-shadow: 0 4px 24px rgba(204,0,24,0.28), 0 1px 4px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.18); }
+  50%       { box-shadow: 0 6px 36px rgba(204,0,24,0.48), 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.22); }
+}
+
+/* ── Player animations ── */
+@keyframes stripe-sweep {
+  0%   { transform: translateX(-100%); }
+  35%  { transform: translateX(250%);  }
+  100% { transform: translateX(250%);  }
+}
+@keyframes info-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Search animations ── */
+@keyframes result-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+/* ── Wheel animations ── */
+@keyframes whl-spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,50 @@
+/* ============================================================
+   FAMILY ARCHIVES — Design System
+   Dark theme · Armenian palette (red / blue / orange)
+   Font: Nunito (Google Fonts) — rounded, warm, family-friendly
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+/* ── Custom Properties ──────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-base:       #07070F;
+  --bg-surface:    #0D0D1C;
+  --bg-card:       #121224;
+  --bg-card-hover: #191930;
+
+  /* Armenian palette — vivid enough to use as text on dark bg */
+  --red:           #CC0018;
+  --red-bright:    #EE1030;
+  --red-text:      #FF4455;      /* lighter red — legible as text */
+  --red-dim:       rgba(204, 0, 24, 0.15);
+
+  --blue:          #0030A8;
+  --blue-bright:   #3366DD;
+  --blue-text:     #6699FF;      /* lighter blue — legible as text */
+  --blue-dim:      rgba(0, 48, 168, 0.15);
+
+  --orange:        #D07800;
+  --orange-bright: #F09010;
+  --orange-text:   #F5A830;      /* warm amber — great on dark bg */
+  --orange-dim:    rgba(208, 120, 0, 0.15);
+
+  /* Text — warm cream tones instead of cold white */
+  --text-primary:   #F2E8D0;     /* warm parchment cream */
+  --text-secondary: #A8906A;     /* warm tan */
+  --text-muted:     #6A5840;     /* warm dark tan */
+
+  /* Borders */
+  --border:       rgba(242, 232, 208, 0.07);
+  --border-hover: rgba(242, 232, 208, 0.15);
+
+  /* Layout */
+  --nav-h: 72px;
+  --max-w: 1400px;
+  --pad-x: clamp(1.25rem, 5vw, 4rem);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur:  0.35s;
+}

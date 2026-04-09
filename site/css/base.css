@@ -1,0 +1,187 @@
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+h1,h2,h3,h4 { font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+/* ============================================================
+   PAGE HEADER — Shared across playlists + timeline pages
+   ============================================================ */
+.page-header {
+  padding: calc(var(--nav-h) + 3.5rem) var(--pad-x) 3rem;
+  background:
+    linear-gradient(180deg, rgba(7,7,15,0) 0%, var(--bg-base) 100%),
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(204,0,24,0.07) 0%, transparent 70%);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.page-header-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.page-header-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.6s var(--ease) 0.1s forwards;
+}
+.page-header-title {
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.6s var(--ease) 0.2s forwards;
+}
+.page-header-title span { color: var(--red-text); }
+.page-header--timeline .page-header-title span { color: var(--blue-text); }
+.page-header-desc {
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  opacity: 0;
+  animation: fadeUp 0.6s var(--ease) 0.3s forwards;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .player-layout { grid-template-columns: 1fr 300px; }
+  .playlists-grid { columns: 2; }
+}
+
+@media (max-width: 900px) {
+  .player-layout {
+    grid-template-columns: 1fr;
+  }
+  .player-main { position: static; }
+  .video-list {
+    max-height: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .video-item-thumb { width: 90px; min-width: 90px; }
+}
+
+@media (max-width: 768px) {
+  /* ── Hero: single column, video pinned to upper-right corner ── */
+  .hero {
+    grid-template-columns: 1fr;
+    position: relative;          /* anchor for the absolute video */
+    min-height: auto;
+    padding-top: calc(var(--nav-h) + 2rem);
+    padding-bottom: 3.5rem;
+    gap: 0;
+  }
+
+  /* Text shifts right to make room for the pinned video */
+  .hero-content {
+    padding-right: 152px;
+  }
+
+  /* ── Video: lifts out of flow, pins to upper-right like a tucked photo ── */
+  .hero-visual {
+    display: block;
+    position: absolute;
+    top: calc(var(--nav-h) + 1.5rem);
+    right: var(--pad-x);
+    width: 128px;
+    z-index: 5;
+    opacity: 0;
+    /* Slight clockwise tilt adds physical depth — Z-axis cascade */
+    animation: mobileFilmReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both;
+  }
+
+  @keyframes mobileFilmReveal {
+    from { opacity: 0; transform: rotate(2deg) translateY(10px); }
+    to   { opacity: 1; transform: rotate(2deg); }
+  }
+
+  .hero-art { max-width: 100%; }
+
+  /* Compact frame — tighter radius, deeper shadow for the mini size */
+  .hero-art-frame {
+    border-radius: 6px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.10),
+      0 14px 40px rgba(0, 0, 0, 0.75),
+      0 0 22px rgba(204, 0, 24, 0.18);
+  }
+
+  /* Slim sprocket rails to match the compact frame */
+  .film-rail {
+    height: 16px;
+    background-size: 18px 100%;
+    background-position: 9px center;
+  }
+  .film-rail-label { font-size: 0.36rem; }
+
+  /* No room for the badge at this size */
+  .hero-art-badge { display: none; }
+
+  /* Stats bar wraps */
+  .stats-bar-inner { gap: 2rem; flex-wrap: wrap; }
+  .stat-value { font-size: 1.8rem; }
+
+  /* Playlist grid: single column on mobile */
+  .playlists-grid { columns: 1; }
+
+  /* Section header stacks */
+  .section-header { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+
+  /* ── Mobile nav: hide desktop links, show hamburger ── */
+  .nav-links    { display: none; }
+  .nav-hamburger { display: flex; }
+  .mobile-menu  { display: flex; }
+
+  /* Video list single column */
+  .video-list { grid-template-columns: 1fr; }
+
+  /* Footer collapses to centered column */
+  footer { padding: 3.5rem var(--pad-x) 3rem; }
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 2rem;
+  }
+  .footer-logo-wrap { align-items: center; }
+  .footer-aside { align-items: center; }
+  .footer-links { align-items: center; flex-direction: row; }
+  .footer-link--internal:hover,
+  .footer-link--timeline:hover,
+  .footer-link--external:hover { transform: translateY(-2px); }
+  .footer-bottom { flex-direction: column-reverse; gap: 0.75rem; }
+
+  /* Skeletons collapse */
+  .skel-card,
+  .skel-card:nth-child(n) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 3rem; }
+  .playlists-section { padding-top: 3rem; }
+}

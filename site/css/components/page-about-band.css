@@ -1,0 +1,109 @@
+/* ============================================================
+   PAGE ABOUT BAND — editorial info section below main content
+   ============================================================ */
+.page-about-band {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 5rem var(--pad-x) 4.5rem;
+}
+.page-about-band-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1px 1.15fr;
+  gap: 0 4.5rem;
+  align-items: start;
+}
+
+/* Left — title block */
+.pab-left {
+  padding-left: 1.75rem;
+  border-left: 2.5px solid var(--red);
+}
+.pab--timeline .pab-left {
+  border-left-color: var(--blue-bright);
+}
+.pab-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+  margin-bottom: 0.85rem;
+}
+.pab-title {
+  font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+.pab-title span       { color: var(--red-text); }
+.pab--timeline .pab-title span { color: var(--blue-text); }
+.pab-subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* Vertical divider */
+.pab-divider {
+  background: var(--border);
+  align-self: stretch;
+  min-height: 120px;
+}
+
+/* Right — stats + description */
+.pab-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.25rem;
+}
+.pab-stats {
+  display: flex;
+  gap: 3rem;
+}
+.pab-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.pab-stat-value {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pab-stat--orange { color: var(--orange-text); }
+.pab-stat--blue   { color: var(--blue-text); }
+.pab-stat--red    { color: var(--red-text); }
+.pab-stat-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.pab-desc {
+  font-size: 0.91rem;
+  color: var(--text-secondary);
+  line-height: 1.82;
+  max-width: 52ch;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .page-about-band { padding: 3.5rem var(--pad-x) 3rem; }
+  .page-about-band-inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem 0;
+  }
+  .pab-divider { display: none; }
+  .pab-stat-value { font-size: 2rem; }
+}
