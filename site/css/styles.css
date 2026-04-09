@@ -24,3 +24,7 @@
 @import './components/search.css';
 @import './components/wheel-picker.css';
 @import './components/page-about-band.css';
+
+/* 5. Responsive overrides — MUST be last so media-query rules
+      beat same-specificity component defaults in the cascade */
+@import './responsive.css';

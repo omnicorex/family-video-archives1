@@ -1,0 +1,141 @@
+/* ============================================================
+   RESPONSIVE — All breakpoint overrides.
+   MUST be imported LAST so media-query rules win over
+   component defaults that share the same specificity.
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .player-layout   { grid-template-columns: 1fr 300px; }
+  .playlists-grid  { columns: 2; }
+}
+
+@media (max-width: 900px) {
+  .player-layout            { grid-template-columns: 1fr; }
+  .player-main              { position: static; }
+  .video-list               { max-height: none; display: grid; grid-template-columns: repeat(2, 1fr); }
+  .video-item-thumb         { width: 90px; min-width: 90px; }
+}
+
+@media (max-width: 768px) {
+  /* ── Hero: single column, video pinned to upper-right corner ── */
+  .hero {
+    grid-template-columns: 1fr;
+    position: relative;
+    min-height: auto;
+    padding-top: calc(var(--nav-h) + 2rem);
+    padding-bottom: 3.5rem;
+    gap: 0;
+  }
+
+  /* Text shifts right to leave room for the pinned video thumbnail */
+  .hero-content {
+    padding-right: 144px;
+  }
+
+  /* ── Video: lifts out of flow, pins to upper-right like a tucked photo ── */
+  .hero-visual {
+    display: block;
+    position: absolute;
+    top: calc(var(--nav-h) + 1.5rem);
+    right: var(--pad-x);
+    width: 120px;
+    z-index: 5;
+    opacity: 0;
+    animation: mobileFilmReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both;
+  }
+
+  @keyframes mobileFilmReveal {
+    from { opacity: 0; transform: rotate(2deg) translateY(10px); }
+    to   { opacity: 1; transform: rotate(2deg); }
+  }
+
+  .hero-art         { max-width: 100%; }
+
+  /* Compact frame */
+  .hero-art-frame {
+    border-radius: 6px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.10),
+      0 14px 40px rgba(0, 0, 0, 0.75),
+      0 0 22px rgba(204, 0, 24, 0.18);
+  }
+
+  /* Slim sprocket rails */
+  .film-rail {
+    height: 16px;
+    background-size: 18px 100%;
+    background-position: 9px center;
+  }
+  .film-rail-label  { font-size: 0.36rem; }
+
+  /* Badge hidden at this size */
+  .hero-art-badge   { display: none; }
+
+  /* Stats bar */
+  .stats-bar-inner  { gap: 2rem; flex-wrap: wrap; }
+  .stat-value       { font-size: 1.8rem; }
+
+  /* Playlist grid: single column */
+  .playlists-grid   { columns: 1; }
+
+  /* Section header stacks */
+  .section-header   { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+
+  /* ── Mobile nav: hide desktop links, show hamburger ── */
+  .nav-links        { display: none; }
+  .nav-hamburger    { display: flex; }
+  .mobile-menu      { display: flex; }
+
+  /* Video list single column */
+  .video-list       { grid-template-columns: 1fr; }
+
+  /* ── Footer: centered column ── */
+  footer            { padding: 3.5rem var(--pad-x) 3rem; }
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 2rem;
+  }
+  .footer-logo-wrap { align-items: center; }
+  .footer-aside     { align-items: center; }
+  .footer-links     { align-items: center; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .footer-link--internal:hover,
+  .footer-link--timeline:hover,
+  .footer-link--external:hover { transform: translateY(-2px); }
+  .footer-bottom    { flex-direction: column-reverse; gap: 0.75rem; text-align: center; }
+
+  /* Skeletons collapse */
+  .skel-card,
+  .skel-card:nth-child(n) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  /* On very small screens, reduce padding-right so text isn't scrunched */
+  .hero-content {
+    padding-right: 120px;
+  }
+  .hero-visual {
+    width: 104px;
+  }
+
+  .hero-title { font-size: 2.6rem; }
+
+  .playlists-section { padding-top: 3rem; }
+}
+
+@media (max-width: 380px) {
+  /* Smallest phones: drop the pinned video layout, stack normally */
+  .hero {
+    position: static;
+    padding-top: calc(var(--nav-h) + 1.5rem);
+    padding-bottom: 2.5rem;
+  }
+  .hero-content {
+    padding-right: 0;
+  }
+  .hero-visual {
+    display: none;
+  }
+  .hero-title { font-size: 2.4rem; }
+}
