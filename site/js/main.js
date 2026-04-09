@@ -65,6 +65,11 @@ function applyBranding() {
   // <title>
   if (PAGE === "index") document.title = name;
 
+  // Donate links — all elements with data-donate get their href from config
+  if (CONFIG.donateUrl) {
+    qAll("[data-donate]").forEach(e => e.href = CONFIG.donateUrl);
+  }
+
   // Color overrides from config
   const c = CONFIG.colors || {};
   const root = document.documentElement;
