@@ -34,10 +34,7 @@
   <!-- ── Navigation ─────────────────────────────────────────── -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a class="nav-logo" href="index.html" aria-label="Home">
-        <img src="branding/logo.svg" alt="" aria-hidden="true" width="34" height="34">
-        <span id="nav-site-name">Family Archives</span>
-      </a>
+      <a class="nav-logo" href="index.html">Home</a>
       <ul class="nav-links" role="list">
         <li><a class="nav-link nav-link--internal" href="playlists.html">Playlists</a></li>
         <li><a class="nav-link nav-link--timeline nav-link--active" href="timeline.html">Timeline</a></li>
@@ -88,6 +85,38 @@
       <p class="mobile-menu-hint" aria-hidden="true">tap outside to close</p>
     </div>
   </div>
+
+  <!-- ── Mobile bottom dock ─────────────────────────────────── -->
+  <nav class="mobile-dock" aria-label="Mobile navigation">
+    <a class="mobile-dock-item mobile-dock-item--home" href="index.html">
+      <svg class="mobile-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="mobile-dock-label">Home</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-item--red" href="playlists.html">
+      <svg class="mobile-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+      <span class="mobile-dock-label">Playlists</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-item--blue" href="timeline.html">
+      <svg class="mobile-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span class="mobile-dock-label">Timeline</span>
+    </a>
+    <button class="mobile-dock-item mobile-dock-item--orange" id="dock-search-btn" aria-label="Search">
+      <svg class="mobile-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <span class="mobile-dock-label">Search</span>
+    </button>
+  </nav>
 
   <!-- ── Wheel Stage — fills viewport immediately ─────────────── -->
   <div class="wheel-stage" id="wheel-stage">

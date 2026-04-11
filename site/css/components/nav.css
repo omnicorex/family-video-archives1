@@ -1,43 +1,111 @@
 /* ============================================================
-   NAVIGATION
+   NAVIGATION — floating centered pill
    ============================================================ */
 .nav {
   position: fixed;
-  inset: 0 0 auto 0;
+  top: 1.25rem;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateX(-50%);
   z-index: 200;
-  height: var(--nav-h);
-  padding: 0 var(--pad-x);
+  width: auto;
+  /* Never wider than the viewport — prevents the logo from sliding off-screen */
+  max-width: calc(100vw - 1.5rem);
+  height: auto;
+  padding: 0.35rem;
+  border-radius: 99px;
   display: flex;
   align-items: center;
-  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
-  border-bottom: 1px solid transparent;
+  /* Always-on glassmorphism pill — Armenian tricolor border */
+  background:
+    linear-gradient(rgba(7, 7, 16, 0.88), rgba(7, 7, 16, 0.88)) padding-box,
+    linear-gradient(90deg, #EE1030 0%, #3366DD 50%, #F09010 100%) border-box;
+  border: 1px solid transparent;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 2px 8px  rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  /* Entrance animation — floats down from above on load */
+  animation: nav-pill-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+  transition:
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.nav.scrolled {
-  background: rgba(6, 6, 14, 0.88);
-  border-color: var(--border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-.nav-inner {
-  width: 100%;
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1rem;
-  font-weight: 700;
-  transition: opacity var(--dur) var(--ease);
-}
-.nav-logo:hover { opacity: 0.75; }
-.nav-logo img { width: 34px; height: 34px; }
 
-.nav-links { display: flex; gap: 0.6rem; list-style: none; align-items: center; }
+/* When scrolled, deepen the glass — pill becomes more anchored */
+.nav.scrolled {
+  background:
+    linear-gradient(rgba(7, 7, 16, 0.96), rgba(7, 7, 16, 0.96)) padding-box,
+    linear-gradient(90deg, #EE1030 0%, #3366DD 50%, #F09010 100%) border-box;
+  box-shadow:
+    0 14px 52px rgba(0, 0, 0, 0.72),
+    0 3px 12px  rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+/* Inner flex row — no centering needed; pill constrains its own width */
+.nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  justify-content: flex-start;
+}
+
+/* Inner flex row fills the pill so flex-shrink can distribute pressure correctly */
+.nav-inner { width: 100%; }
+.nav-logo  { flex-shrink: 0; }               /* home button never squeezed */
+.nav-links { flex-shrink: 1; min-width: 0; } /* links absorb any excess */
+
+/* Home button — teal pill, matches the style of the other nav buttons */
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.42rem 1rem;
+  border-radius: 99px;
+  background: rgba(0, 186, 210, 0.10);
+  color: #00C8D7;
+  border: 1px solid rgba(0, 186, 210, 0.22);
+  transition:
+    background   0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color        0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform    0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-logo:hover {
+  background: rgba(0, 186, 210, 0.18);
+  border-color: rgba(0, 186, 210, 0.50);
+  color: #fff;
+  transform: translateY(-1px);
+}
+[data-page="index"] .nav-logo {
+  background:   rgba(0, 186, 210, 0.30);
+  border-color: rgba(0, 186, 210, 0.65);
+  color: #33E8F8;
+  text-shadow: 0 0 12px rgba(0, 200, 218, 0.60);
+}
+
+/* Keyboard shortcut hint hidden at narrower widths to save space */
+@media (max-width: 980px) { .nav-search-kbd { display: none; } }
+
+/* Compact button padding on tight desktop widths */
+@media (max-width: 860px) {
+  .nav-link--internal,
+  .nav-link--timeline { padding-left: 0.65rem; padding-right: 0.65rem; }
+  .nav-search-btn     { padding-left: 0.65rem; padding-right: 0.65rem; }
+  .nav-links          { gap: 0.3rem; }
+}
+
+.nav-links { display: flex; gap: 0.45rem; list-style: none; align-items: center; }
 
 /* ── Internal anchor link — red pill (matches mobile 01) ── */
 .nav-link--internal {
@@ -394,12 +462,116 @@
   transform: translateY(-1px);
 }
 .nav-link--active.nav-link--internal {
-  background:   rgba(204, 0, 24, 0.22);
-  border-color: rgba(255, 68, 85, 0.55);
-  color: #fff;
+  background:   rgba(204, 0, 24, 0.30);
+  border-color: rgba(255, 68, 85, 0.65);
+  color: var(--red-text);
+  text-shadow: 0 0 12px rgba(255, 68, 85, 0.60);
 }
 .nav-link--active.nav-link--timeline {
-  background:   rgba(0, 48, 168, 0.22);
-  border-color: rgba(102, 153, 255, 0.55);
-  color: #fff;
+  background:   rgba(0, 48, 168, 0.30);
+  border-color: rgba(102, 153, 255, 0.65);
+  color: var(--blue-text);
+  text-shadow: 0 0 12px rgba(102, 153, 255, 0.60);
 }
+
+/* ============================================================
+   MOBILE BOTTOM DOCK — replaces top nav on mobile (≤768px)
+   ============================================================ */
+.mobile-dock {
+  display: none;               /* shown via responsive.css */
+  position: fixed;
+  bottom: calc(1.1rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  align-items: center;
+  gap: 0;
+  padding: 0.35rem;
+  border-radius: 99px;
+  white-space: nowrap;
+  /* Glassmorphism pill with Armenian tricolor border */
+  background:
+    linear-gradient(rgba(7, 7, 16, 0.94), rgba(7, 7, 16, 0.94)) padding-box,
+    linear-gradient(90deg, #EE1030 0%, #3366DD 50%, #F09010 100%) border-box;
+  border: 1px solid transparent;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.65),
+    0 2px 8px  rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ── Dock item (both <a> and <button>) ── */
+.mobile-dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.22rem;
+  padding: 0.55rem 1rem;
+  border-radius: 99px;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform  0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-dock-item:active { transform: scale(0.88); }
+
+.mobile-dock-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.2s ease;
+}
+
+
+.mobile-dock-label {
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.2s ease;
+}
+
+/* ── Idle color tints per section ── */
+.mobile-dock-item--home   .mobile-dock-icon,
+.mobile-dock-item--home   .mobile-dock-label { color: rgba(0, 200, 218, 0.65); }
+.mobile-dock-item--red    .mobile-dock-icon,
+.mobile-dock-item--red    .mobile-dock-label { color: rgba(255,  68,  85, 0.60); }
+.mobile-dock-item--blue   .mobile-dock-icon,
+.mobile-dock-item--blue   .mobile-dock-label { color: rgba(102, 153, 255, 0.60); }
+.mobile-dock-item--orange .mobile-dock-icon,
+.mobile-dock-item--orange .mobile-dock-label { color: rgba(245, 168,  48, 0.60); }
+
+/* ── Active: current page highlighted ── */
+[data-page="index"] .mobile-dock-item--home {
+  background: rgba(0, 186, 210, 0.22);
+}
+[data-page="index"] .mobile-dock-item--home .mobile-dock-icon,
+[data-page="index"] .mobile-dock-item--home .mobile-dock-label { color: #33E8F8; }
+[data-page="index"] .mobile-dock-item--home .mobile-dock-icon  { filter: drop-shadow(0 0 5px rgba(0, 200, 218, 0.70)); }
+[data-page="index"] .mobile-dock-item--home .mobile-dock-label { text-shadow: 0 0 8px rgba(0, 200, 218, 0.70); }
+
+[data-page="playlists"] .mobile-dock-item--red,
+[data-page="playlist"]  .mobile-dock-item--red { background: rgba(204, 0, 24, 0.22); }
+[data-page="playlists"] .mobile-dock-item--red .mobile-dock-icon,
+[data-page="playlists"] .mobile-dock-item--red .mobile-dock-label,
+[data-page="playlist"]  .mobile-dock-item--red .mobile-dock-icon,
+[data-page="playlist"]  .mobile-dock-item--red .mobile-dock-label { color: var(--red-text); }
+[data-page="playlists"] .mobile-dock-item--red .mobile-dock-icon,
+[data-page="playlist"]  .mobile-dock-item--red .mobile-dock-icon  { filter: drop-shadow(0 0 5px rgba(255, 68, 85, 0.70)); }
+[data-page="playlists"] .mobile-dock-item--red .mobile-dock-label,
+[data-page="playlist"]  .mobile-dock-item--red .mobile-dock-label { text-shadow: 0 0 8px rgba(255, 68, 85, 0.70); }
+
+[data-page="timeline"] .mobile-dock-item--blue { background: rgba(0, 48, 168, 0.26); }
+[data-page="timeline"] .mobile-dock-item--blue .mobile-dock-icon,
+[data-page="timeline"] .mobile-dock-item--blue .mobile-dock-label { color: var(--blue-text); }
+[data-page="timeline"] .mobile-dock-item--blue .mobile-dock-icon  { filter: drop-shadow(0 0 5px rgba(102, 153, 255, 0.70)); }
+[data-page="timeline"] .mobile-dock-item--blue .mobile-dock-label { text-shadow: 0 0 8px rgba(102, 153, 255, 0.70); }

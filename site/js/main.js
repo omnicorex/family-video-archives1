@@ -657,6 +657,8 @@ function initSearch() {
   if (btn) btn.addEventListener("click", openSearch);
   const footerBtn = q("#footer-search-btn");
   if (footerBtn) footerBtn.addEventListener("click", openSearch);
+  const dockBtn = q("#dock-search-btn");
+  if (dockBtn) dockBtn.addEventListener("click", openSearch);
 
   // Global shortcuts: Cmd/Ctrl+K or "/" (not in an input)
   document.addEventListener("keydown", e => {

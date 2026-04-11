@@ -22,7 +22,7 @@
     grid-template-columns: 1fr;
     position: relative;
     min-height: auto;
-    padding-top: calc(var(--nav-h) + 2rem);
+    padding-top: 2.5rem;
     padding-bottom: 3.5rem;
     gap: 0;
   }
@@ -36,7 +36,7 @@
   .hero-visual {
     display: block;
     position: absolute;
-    top: calc(var(--nav-h) + 1.5rem);
+    top: 1.5rem;
     right: var(--pad-x);
     width: 120px;
     z-index: 5;
@@ -60,11 +60,12 @@
       0 0 22px rgba(204, 0, 24, 0.18);
   }
 
-  /* Slim sprocket rails */
+  /* Slim sprocket rails — mobile uses an 18px pitch, switch to matching keyframe */
   .film-rail {
     height: 16px;
     background-size: 18px 100%;
     background-position: 9px center;
+    animation-name: film-advance-sm;
   }
   .film-rail-label  { font-size: 0.36rem; }
 
@@ -81,10 +82,29 @@
   /* Section header stacks */
   .section-header   { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
 
-  /* ── Mobile nav: hide desktop links, show hamburger ── */
-  .nav-links        { display: none; }
-  .nav-hamburger    { display: flex; }
-  .mobile-menu      { display: flex; }
+  /* ── Mobile nav: ditch the top bar, use the bottom dock instead ── */
+  .nav              { display: none; }
+  .mobile-menu      { display: none; }
+  .mobile-dock      { display: flex; }
+
+  /* Dock clearance — all page content scrolls past the fixed pill */
+  body { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+
+  /* Page header: no top nav to clear */
+  .page-header { padding-top: 3rem; }
+
+  /* Playlists page: grid starts at top */
+  [data-page="playlists"] .playlists-section { padding-top: 2rem; }
+
+  /* Playlist detail page: hero starts at top */
+  [data-page="playlist"]  .playlist-hero     { padding-top: 2rem; }
+
+  /* Timeline: wheel-stage fills full screen — no nav-h offset */
+  [data-page="timeline"]  .wheel-stage {
+    top: 0;
+    height: 100dvh;
+    padding-top: 0;
+  }
 
   /* Video list single column */
   .video-list       { grid-template-columns: 1fr; }
@@ -127,7 +147,7 @@
   /* Smallest phones: drop the pinned video layout, stack normally */
   .hero {
     position: static;
-    padding-top: calc(var(--nav-h) + 1.5rem);
+    padding-top: 2rem;
     padding-bottom: 2.5rem;
   }
   .hero-content {

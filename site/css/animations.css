@@ -125,6 +125,24 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── Nav pill entrance — floats in from above on page load ── */
+@keyframes nav-pill-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-14px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Film strip advancing — holes scroll exactly one background-size period ── */
+@keyframes film-advance {
+  /* Desktop: background-size 26px → advance exactly 26px for seamless loop */
+  from { background-position: 13px center; }
+  to   { background-position: 39px center; }
+}
+@keyframes film-advance-sm {
+  /* Mobile: background-size 18px → advance exactly 18px */
+  from { background-position: 9px center; }
+  to   { background-position: 27px center; }
+}
+
 /* ── Tricolor border spin (footer donate button) — 360° rotation = perfectly seamless ── */
 @keyframes tricolor-spin {
   from { transform: translate(-50%, -50%) rotate(0deg); }
