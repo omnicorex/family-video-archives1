@@ -287,6 +287,9 @@ function initPlaylistPage() {
       if (activeItem) activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 300);
   }
+
+  // Auto-fullscreen when the user rotates to landscape on mobile
+  initPlaylistLandscapeFullscreen();
 }
 
 function renderVideoList(videos) {
@@ -455,6 +458,44 @@ function loadVideo(video, index) {
     vid.src = mp4Url;
     vid.play().catch(() => {});
   }
+}
+
+// ── Playlist page: auto-fullscreen on landscape rotation ──────
+function initPlaylistLandscapeFullscreen() {
+  // Touch/mobile devices only — no-op on desktop
+  if (!('ontouchstart' in window) && !navigator.maxTouchPoints) return;
+
+  function onOrientationChange() {
+    // Brief delay so the browser finishes resizing before we measure
+    setTimeout(() => {
+      const isLandscape = window.innerWidth > window.innerHeight;
+      // Always query fresh — the <video> element is recreated on each video switch
+      const vid = q("#video-player");
+      if (!vid || vid.tagName !== "VIDEO") return;
+
+      if (isLandscape) {
+        // Already fullscreen? Nothing to do
+        if (document.fullscreenElement || vid.webkitDisplayingFullscreen) return;
+        // Android / Chrome / Firefox
+        if (vid.requestFullscreen) { vid.requestFullscreen().catch(() => {}); return; }
+        // iOS Safari
+        if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+      } else {
+        // Returned to portrait — exit fullscreen so the page layout is visible again
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+        // iOS Safari exits on its own when you leave landscape; no action needed
+      }
+    }, 120);
+  }
+
+  // Modern API (Chrome Android, Firefox for Android, Samsung Internet)
+  if (screen.orientation) {
+    screen.orientation.addEventListener("change", onOrientationChange);
+  }
+  // Fallback — iOS Safari still only fires this event
+  window.addEventListener("orientationchange", onOrientationChange);
 }
 
 function showError(msg) {
