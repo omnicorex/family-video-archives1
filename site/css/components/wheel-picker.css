@@ -570,6 +570,7 @@
 /* Hidden on desktop; shown only on mobile via the responsive block below */
 .whl-player-screen {
   display: none; /* enabled in mobile media query */
+  pointer-events: none; /* must NOT intercept events when off-screen */
   position: fixed;
   inset: 0;
   z-index: 300;
@@ -580,6 +581,7 @@
 }
 .whl-player-screen.is-open {
   transform: translateY(0);
+  pointer-events: auto; /* restore interactivity only when visible */
 }
 
 /* Back button — top-left pill */
@@ -674,10 +676,10 @@
    RESPONSIVE — Wheel / Timeline
    ============================================================ */
 @media (max-width: 900px) {
-  /* Lock the timeline page to the viewport — no accidental scroll to footer */
-  body[data-page="timeline"] {
-    overflow: hidden;
-  }
+  /* Lock the timeline page to the viewport — no accidental scroll to footer.
+     We hide all non-fixed content and rely on the fixed wheel-stage to fill
+     the screen; no overflow:hidden needed (it's redundant here and breaks
+     touch events on iOS Safari when set on <body>). */
   body[data-page="timeline"] .page-about-band,
   body[data-page="timeline"] footer {
     display: none;
