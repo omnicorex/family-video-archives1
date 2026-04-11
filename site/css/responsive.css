@@ -106,29 +106,46 @@
   /* Remove the vertical divider after back-link when stacked */
   .playlist-topbar-inner .back-link::after   { display: none; }
 
-  /* Timeline mobile: wheel at top → info tight below → ~⅓ blank for dock */
+  /* ── Timeline mobile layout ─────────────────────────────────────────
+     Replace the inherited grid (which creates phantom row gaps) with a
+     plain flex column.  display:none items are silently skipped in flex,
+     so the info section snaps immediately below the picker.
+     Nav is replaced by the bottom dock here — kill the 72 px top offset. */
   [data-page="timeline"] .wheel-stage {
-    padding-top: 0;
-    align-content: start;   /* pack rows at top — no stretch gap between wheel and info */
+    display: flex;
+    flex-direction: column;
+    top: 0;          /* nav is hidden; remove inherited top: var(--nav-h) */
+    height: 100dvh;  /* full viewport — dock overlays the bottom slice    */
+    padding: 0;
   }
-  /* Shrink wheel to ~45 % of screen so info fits below without scrolling */
-  [data-page="timeline"] .wheel-container {
-    height: 45vh;
-    max-height: 400px;
-    min-height: 220px;
-  }
-  /* Less breathing room at the very top of the picker */
+  /* Picker doesn't grow or shrink — it wraps its content exactly */
   [data-page="timeline"] .wheel-picker-wrap {
-    padding-top: 0.5rem;
+    flex: 0 0 auto;
+    /* Always at least 0.75 rem from top edge; more on notched phones */
+    padding: max(env(safe-area-inset-top), 0.75rem) 0.75rem 0;
+  }
+  /* Trim wheel to 3-item height (3 × 112 px) — no more cavernous dark space */
+  [data-page="timeline"] .wheel-container {
+    height: 336px;
+    max-height: 336px;
+    min-height: 224px;
+  }
+  /* Smaller gradient masks so items aren't swallowed by the fade zone */
+  [data-page="timeline"] .wheel-mask {
+    height: 26%;
   }
   /* Compact hint line */
   [data-page="timeline"] .wheel-hint {
-    margin-top: 0.35rem;
+    margin-top: 0.3rem;
   }
-  /* Tighten the gap between wheel and info text */
+  /* Info block: flex item, doesn't grow — sits tight below the hint */
+  [data-page="timeline"] .wheel-mobile-info {
+    flex: 0 0 auto;
+  }
+  /* Tighten internal gap above the divider line */
   [data-page="timeline"] .wmi-inner {
-    margin-top: 0.35rem;
-    padding-top: 0.65rem;
+    margin-top: 0.3rem;
+    padding-top: 0.6rem;
   }
 
   /* Video list single column */
