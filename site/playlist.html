@@ -125,20 +125,25 @@
     </button>
   </nav>
 
-  <!-- ── Playlist Header ────────────────────────────────────── -->
-  <header class="playlist-hero">
-    <a class="back-link" href="playlists.html">
-      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      All Playlists
-    </a>
-
-    <div class="playlist-hero-eyebrow" aria-hidden="true">Playlist</div>
-    <h1 class="playlist-hero-title" id="playlist-title">Loading…</h1>
-    <p  class="playlist-hero-desc"  id="playlist-desc"></p>
-    <div class="playlist-hero-meta" id="playlist-meta" aria-live="polite"></div>
+  <!-- ── Playlist Topbar — compact strip above player ────────── -->
+  <header class="playlist-topbar">
+    <div class="playlist-topbar-inner">
+      <a class="back-link" href="playlists.html">
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        All Playlists
+      </a>
+      <div class="playlist-topbar-body">
+        <div class="playlist-topbar-eyebrow" aria-hidden="true">Playlist</div>
+        <h1 class="playlist-topbar-name" id="playlist-title">Loading…</h1>
+        <div class="playlist-topbar-bottom">
+          <div class="playlist-topbar-meta" id="playlist-meta" aria-live="polite"></div>
+          <p class="playlist-topbar-desc" id="playlist-desc"></p>
+        </div>
+      </div>
+    </div>
   </header>
 
   <!-- ── Player + Video List ────────────────────────────────── -->

@@ -1,81 +1,118 @@
 /* ============================================================
-   PLAYLIST PAGE — Header
+   PLAYLIST PAGE — Compact topbar (replaces the old giant hero)
    ============================================================ */
-.playlist-hero {
-  padding-top: calc(var(--nav-h) + 3rem);
-  padding-bottom: 3rem;
+.playlist-topbar {
+  padding-top: calc(var(--nav-h) + 0.75rem);
+  padding-bottom: 0.85rem;
   padding-inline: var(--pad-x);
-  max-width: var(--max-w);
-  margin: 0 auto;
   border-bottom: 1px solid var(--border);
 }
+.playlist-topbar-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 2.25rem;
+  flex-shrink: 0;
   transition: color var(--dur) var(--ease);
 }
 .back-link:hover { color: var(--text-primary); }
 .back-link svg   { transition: transform var(--dur) var(--ease); }
 .back-link:hover svg { transform: translateX(-3px); }
 
-.playlist-hero-eyebrow {
-  font-size: 0.7rem;
+/* Thin vertical divider between back link and title */
+.playlist-topbar-inner .back-link::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 1.6em;
+  background: var(--border-hover);
+  margin-left: 1.5rem;
+}
+
+.playlist-topbar-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.playlist-topbar-eyebrow {
+  font-size: 0.6rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--orange-text);
-  margin-bottom: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.playlist-hero-eyebrow::before {
-  content: '▶';
-  font-size: 0.5rem;
-  line-height: 1;
-  flex-shrink: 0;
-  animation: triColorGlow 4s ease-in-out infinite;
-}
-.playlist-hero-title {
-  font-size: clamp(2.5rem, 5vw, 5.5rem);
-  font-weight: 900;
-  color: var(--orange-text);
-  letter-spacing: -0.03em;
-  line-height: 0.97;
-  margin-bottom: 1.25rem;
-}
-.playlist-hero-desc {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  max-width: 58ch;
-  line-height: 1.75;
-}
-.playlist-hero-meta {
-  display: flex;
-  gap: 2rem;
-  margin-top: 1.5rem;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-.playlist-hero-meta span {
+  margin-bottom: 0.15rem;
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+.playlist-topbar-eyebrow::before {
+  content: '▶';
+  font-size: 0.42rem;
+  flex-shrink: 0;
+  animation: triColorGlow 4s ease-in-out infinite;
+}
+
+.playlist-topbar-name {
+  font-size: clamp(1rem, 2.2vw, 1.5rem);
+  font-weight: 800;
+  color: var(--orange-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlist-topbar-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.playlist-topbar-meta {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.playlist-topbar-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.playlist-topbar-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 45ch;
 }
 
 /* ============================================================
    VIDEO PLAYER SECTION
    ============================================================ */
 .player-section {
-  padding: 3rem var(--pad-x) 5rem;
+  padding: 1.25rem var(--pad-x) 5rem;
   max-width: var(--max-w);
   margin: 0 auto;
 }
@@ -87,7 +124,7 @@
 }
 
 /* Main player */
-.player-main { position: sticky; top: calc(var(--nav-h) + 1.25rem); }
+.player-main { position: sticky; top: 1rem; }
 
 .player-embed-wrap {
   aspect-ratio: 16/9;

@@ -11,7 +11,7 @@
 
 @media (max-width: 900px) {
   .player-layout            { grid-template-columns: 1fr; }
-  .player-main              { position: static; }
+  .player-main              { position: static; top: auto; }
   .video-list               { max-height: none; display: grid; grid-template-columns: repeat(2, 1fr); }
   .video-item-thumb         { width: 90px; min-width: 90px; }
 }
@@ -96,8 +96,15 @@
   /* Playlists page: grid starts at top */
   [data-page="playlists"] .playlists-section { padding-top: 2rem; }
 
-  /* Playlist detail page: hero starts at top */
-  [data-page="playlist"]  .playlist-hero     { padding-top: 2rem; }
+  /* Playlist detail page: topbar starts at top, no nav offset needed */
+  [data-page="playlist"]  .playlist-topbar   { padding-top: 1.5rem; }
+
+  /* Compact topbar on mobile: hide description, stack back-link above title */
+  .playlist-topbar-desc                      { display: none; }
+  .playlist-topbar-inner                     { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .playlist-topbar-name                      { font-size: clamp(1rem, 5vw, 1.4rem); }
+  /* Remove the vertical divider after back-link when stacked */
+  .playlist-topbar-inner .back-link::after   { display: none; }
 
   /* Timeline: wheel-stage fills full screen — no nav-h offset */
   [data-page="timeline"]  .wheel-stage {
