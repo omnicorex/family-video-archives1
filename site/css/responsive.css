@@ -106,10 +106,29 @@
   /* Remove the vertical divider after back-link when stacked */
   .playlist-topbar-inner .back-link::after   { display: none; }
 
-  /* Timeline: wheel + info pack tight — no nav offset, no forced height */
-  [data-page="timeline"]  .wheel-stage {
+  /* Timeline mobile: wheel at top → info tight below → ~⅓ blank for dock */
+  [data-page="timeline"] .wheel-stage {
     padding-top: 0;
-    align-content: start; /* rows pack at top — prevents blank gap between wheel and info */
+    align-content: start;   /* pack rows at top — no stretch gap between wheel and info */
+  }
+  /* Shrink wheel to ~45 % of screen so info fits below without scrolling */
+  [data-page="timeline"] .wheel-container {
+    height: 45vh;
+    max-height: 400px;
+    min-height: 220px;
+  }
+  /* Less breathing room at the very top of the picker */
+  [data-page="timeline"] .wheel-picker-wrap {
+    padding-top: 0.5rem;
+  }
+  /* Compact hint line */
+  [data-page="timeline"] .wheel-hint {
+    margin-top: 0.35rem;
+  }
+  /* Tighten the gap between wheel and info text */
+  [data-page="timeline"] .wmi-inner {
+    margin-top: 0.35rem;
+    padding-top: 0.65rem;
   }
 
   /* Video list single column */
