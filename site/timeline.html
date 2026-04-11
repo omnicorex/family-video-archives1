@@ -159,18 +159,16 @@
 
   </div><!-- /.wheel-stage -->
 
-  <!-- ── Mobile: Bottom-sheet player ───────────────────────── -->
-  <div class="wheel-sheet" id="wheel-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video player">
-    <div class="wheel-sheet-panel">
-      <div class="wheel-sheet-handle" aria-hidden="true"></div>
-      <button class="wheel-sheet-close" id="wheel-sheet-close" aria-label="Close player">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
-      </button>
-      <div class="wheel-sheet-player" id="wheel-sheet-player"></div>
-      <div class="wheel-sheet-info" id="wheel-sheet-info"></div>
-    </div>
+  <!-- ── Mobile: Full-screen player (virtual page via History API) ── -->
+  <div class="whl-player-screen" id="whl-player-screen" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video player">
+    <button class="whl-ps-back" id="whl-ps-back" aria-label="Back to timeline">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Back
+    </button>
+    <div class="whl-ps-embed" id="whl-ps-embed"></div>
+    <div class="whl-ps-info"  id="whl-ps-info"></div>
   </div>
 
   <!-- ── About Band ────────────────────────────────────────── -->
