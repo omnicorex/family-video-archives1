@@ -580,8 +580,21 @@
   transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .whl-player-screen.is-open {
+  /* Two-class selector beats any single-class media-query override —
+     keep the screen visible regardless of viewport width (landscape). */
+  display: flex;
   transform: translateY(0);
   pointer-events: auto; /* restore interactivity only when visible */
+}
+
+/* Landscape: maximise video area — hide info strip, nudge back button */
+@media (orientation: landscape) {
+  .whl-player-screen.is-open .whl-ps-info {
+    display: none;
+  }
+  .whl-player-screen.is-open .whl-ps-back {
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+  }
 }
 
 /* Back button — top-left pill */
