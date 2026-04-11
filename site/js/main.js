@@ -967,6 +967,7 @@ const WHL = {
   raf:             null,
   activeIndex:     -1,
   hlsInst:         null,    // active HLS.js instance
+  currentVideo:    null,    // video being played (for orientation migration)
 };
 
 function wheelItemH() { return window.innerWidth < 900 ? 112 : 150; }
@@ -994,6 +995,8 @@ function projectAndSnap(impulse) {
 }
 
 let whlScrollTimer = null; // debounce snap after mouse-wheel
+let whlResizeTimer = null; // debounce orientation/resize handler
+let whlResizePrevMobile = null; // layout mode before last resize
 
 // ── Boot ─────────────────────────────────────────────────────
 function initTimelinePage() {
@@ -1033,6 +1036,14 @@ function initTimelinePage() {
   // Wire up mobile sheet close button
   const closeBtn = q("#wheel-sheet-close");
   if (closeBtn) closeBtn.addEventListener("click", closeWheelSheet);
+
+  // Handle orientation/resize so a playing video migrates between the
+  // bottom-sheet (mobile) and the inline panel (desktop) seamlessly.
+  whlResizePrevMobile = isMobileWheel();
+  window.addEventListener("resize", () => {
+    clearTimeout(whlResizeTimer);
+    whlResizeTimer = setTimeout(whlHandleResize, 150);
+  });
 
   // Start animation loop
   WHL.raf = requestAnimationFrame(wheelTick);
@@ -1393,6 +1404,7 @@ function whlUpdateMobileInfo(video) {
 
 // ── Playback ──────────────────────────────────────────────────
 function whlPlay(video) {
+  WHL.currentVideo = video;
   if (isMobileWheel()) {
     openWheelSheet(video);
   } else {
@@ -1525,4 +1537,39 @@ function closeWheelSheet() {
   if (WHL.hlsInst) { WHL.hlsInst.destroy(); WHL.hlsInst = null; }
   const playerEl = q("#wheel-sheet-player");
   if (playerEl) playerEl.innerHTML = "";
+  WHL.currentVideo = null;
+}
+
+// ── Orientation / resize migration ───────────────────────────
+// Called (debounced) on every resize. If the layout flips between
+// mobile (≤900px) and desktop (>900px) while a video is playing,
+// we tear down the old container and restart playback in the new one.
+function whlHandleResize() {
+  const nowMobile = isMobileWheel();
+  if (nowMobile === whlResizePrevMobile) return;
+  whlResizePrevMobile = nowMobile;
+  if (!WHL.currentVideo) return;
+
+  const video = WHL.currentVideo;
+
+  if (nowMobile) {
+    // Desktop → mobile (e.g. landscape → portrait)
+    // Clear the inline desktop player then open the bottom sheet.
+    const desktopEl = q("#wheel-player-embed");
+    if (desktopEl) desktopEl.innerHTML = "";
+    // whlLoadPlayer (called inside openWheelSheet) will destroy hlsInst.
+    openWheelSheet(video);
+  } else {
+    // Mobile → desktop (e.g. portrait → landscape)
+    // Close the sheet without the usual "user dismissed" side-effects,
+    // then load the video into the inline desktop panel.
+    const sheet = q("#wheel-sheet");
+    if (sheet) { sheet.classList.remove("is-open"); sheet.setAttribute("aria-hidden", "true"); }
+    document.body.style.overflow = "";
+    const playerEl = q("#wheel-sheet-player");
+    if (playerEl) playerEl.innerHTML = "";
+    // whlLoadPlayer destroys hlsInst and creates a new one in the desktop panel.
+    whlLoadPlayer(video, q("#wheel-player-embed"));
+    // Keep WHL.currentVideo set so another rotation can migrate again.
+  }
 }
